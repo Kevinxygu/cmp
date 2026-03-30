@@ -1,0 +1,2775 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>COMM 205 Exam B Review</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --orange-brand: #f09b1a;
+      --ice-bg: #d9ecf7;
+      --card-white: #f6f9fc;
+      --amber-warn: #f4b942;
+      --coral-mistake: #d96c6c;
+      --green-correct: #4f9d69;
+      --dark-text: #1a1a2e;
+      --mid-text: #4a4a6a;
+      --light-text: #7a7a9a;
+      --code-bg: #1e1e2e;
+      --code-text: #e0e0e0;
+      --excel-green: #217346;
+      --r-blue: #276dc3;
+      --slide-bg: #f0f4f8;
+      --shadow: 0 20px 50px rgba(26, 26, 46, 0.08);
+      --shadow-soft: 0 8px 24px rgba(26, 26, 46, 0.08);
+      --radius: 16px;
+      --radius-sm: 10px;
+      --transition: 300ms ease;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: linear-gradient(180deg, #eff5f9 0%, #e6f1f7 100%);
+      color: var(--dark-text);
+      font-family: "Inter", "Segoe UI", system-ui, sans-serif;
+    }
+
+    body {
+      position: relative;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+      border: 0;
+    }
+
+    button:focus-visible,
+    input:focus-visible,
+    select:focus-visible {
+      outline: 3px solid rgba(240, 155, 26, 0.35);
+      outline-offset: 2px;
+    }
+
+    code,
+    pre,
+    .mono {
+      font-family: "JetBrains Mono", "SF Mono", "Consolas", "Liberation Mono", monospace;
+    }
+
+    #progress {
+      position: fixed;
+      inset: 0 auto auto 0;
+      width: 0;
+      height: 3px;
+      background: var(--orange-brand);
+      z-index: 60;
+      transition: width 300ms ease;
+    }
+
+    #top-hint {
+      position: fixed;
+      top: 1rem;
+      right: 1.2rem;
+      z-index: 70;
+      padding: 0.7rem 0.95rem;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.86);
+      border: 1px solid rgba(26, 26, 46, 0.08);
+      box-shadow: var(--shadow-soft);
+      color: var(--mid-text);
+      font-size: 0.9rem;
+      backdrop-filter: blur(10px);
+    }
+
+    #deck {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      padding: 3.4rem 2.8rem 5.2rem;
+      display: flex;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(12px);
+      transition: opacity var(--transition), transform var(--transition);
+      background:
+        radial-gradient(circle at top left, rgba(240, 155, 26, 0.08), transparent 28%),
+        radial-gradient(circle at bottom right, rgba(39, 109, 195, 0.08), transparent 32%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.65), rgba(255, 255, 255, 0.2));
+    }
+
+    .slide.active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateY(0);
+    }
+
+    .slide::before {
+      content: "";
+      position: absolute;
+      inset: 1.5rem;
+      border: 1px solid rgba(26, 26, 46, 0.04);
+      border-radius: 28px;
+      pointer-events: none;
+    }
+
+    .slide-shell {
+      width: min(1100px, 100%);
+      height: auto;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      gap: 1.2rem;
+      position: relative;
+      z-index: 1;
+      transform-origin: center center;
+      will-change: transform;
+    }
+
+    .slide-stage {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      padding-top: 0.25rem;
+    }
+
+    .hero-shell {
+      align-content: center;
+      text-align: center;
+      gap: 1.8rem;
+    }
+
+    .hero-title {
+      margin: 0;
+      font-family: "Space Grotesk", "Inter", sans-serif;
+      font-size: clamp(3rem, 6vw, 4.8rem);
+      line-height: 0.95;
+      letter-spacing: -0.04em;
+    }
+
+    .hero-subtitle,
+    .hero-meta {
+      margin: 0 auto;
+      max-width: 40rem;
+      color: var(--mid-text);
+      font-size: clamp(1.05rem, 1.8vw, 1.3rem);
+      line-height: 1.6;
+    }
+
+    .hero-badge-row,
+    .badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 0.75rem;
+    }
+
+    .badge {
+      padding: 0.6rem 0.9rem;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.85);
+      border: 1px solid rgba(26, 26, 46, 0.08);
+      box-shadow: var(--shadow-soft);
+      font-size: 0.9rem;
+      color: var(--mid-text);
+    }
+
+    .slide-header {
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+    }
+
+    .section-label {
+      font-family: "Space Grotesk", "Inter", sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--section-color, var(--orange-brand));
+    }
+
+    .slide-title {
+      margin: 0;
+      font-family: "Space Grotesk", "Inter", sans-serif;
+      font-size: clamp(2.1rem, 4vw, 3.2rem);
+      line-height: 1.04;
+      letter-spacing: -0.04em;
+    }
+
+    .slide-subtitle {
+      margin: 0;
+      color: var(--mid-text);
+      font-size: 1.08rem;
+      line-height: 1.6;
+      max-width: 58rem;
+    }
+
+    .slide-body {
+      min-height: 0;
+      display: grid;
+      gap: 1.2rem;
+      align-content: start;
+    }
+
+    .card,
+    .interactive-box,
+    .table-box,
+    .callout {
+      background: rgba(255, 255, 255, 0.9);
+      border: 1px solid rgba(26, 26, 46, 0.08);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .card {
+      padding: 1.35rem 1.5rem;
+    }
+
+    .card h3,
+    .card h4,
+    .callout h3 {
+      margin: 0 0 0.7rem;
+      font-family: "Space Grotesk", "Inter", sans-serif;
+      font-size: 1.15rem;
+    }
+
+    .card p,
+    .card li,
+    .callout p {
+      margin: 0;
+      color: var(--mid-text);
+      line-height: 1.55;
+      font-size: 1rem;
+    }
+
+    .card ul,
+    .card ol {
+      margin: 0;
+      padding-left: 1.15rem;
+      display: grid;
+      gap: 0.55rem;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1rem;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1rem;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 1rem;
+    }
+
+    .layout-intro .slide-body,
+    .layout-concept .slide-body,
+    .layout-compare .slide-body,
+    .layout-interactive .slide-body,
+    .layout-workflow .slide-body,
+    .layout-warning .slide-body,
+    .layout-activity .slide-body {
+      grid-template-rows: auto 1fr auto;
+    }
+
+    .layout-intro .content-grid,
+    .layout-concept .content-grid,
+    .layout-compare .content-grid,
+    .layout-warning .content-grid {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .layout-intro .content-grid {
+      grid-template-columns: 1.2fr 0.8fr;
+    }
+
+    .layout-concept .content-grid,
+    .layout-compare .content-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .layout-workflow .content-grid {
+      display: grid;
+      gap: 0.9rem;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .layout-interactive .content-grid {
+      display: grid;
+      gap: 1rem;
+      grid-template-rows: auto 1fr;
+    }
+
+    .layout-warning .content-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .callout-row {
+      display: grid;
+      gap: 0.8rem;
+    }
+
+    .callout {
+      padding: 0.95rem 1.1rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.8rem;
+    }
+
+    .callout-icon {
+      font-size: 1.1rem;
+      line-height: 1.2;
+      margin-top: 0.05rem;
+    }
+
+    .callout.exam-tip {
+      border-left: 6px solid var(--amber-warn);
+    }
+
+    .callout.mistake {
+      border-left: 6px solid var(--coral-mistake);
+    }
+
+    .callout.takeaway {
+      border-left: 6px solid var(--green-correct);
+    }
+
+    .code-block {
+      margin: 0.8rem 0 0;
+      padding: 1rem 1.1rem;
+      background: var(--code-bg);
+      color: var(--code-text);
+      border-radius: 12px;
+      overflow-x: auto;
+      font-size: 1rem;
+      line-height: 1.6;
+      white-space: pre-wrap;
+    }
+
+    .inline-formula,
+    .formula-chip {
+      display: inline-block;
+      background: rgba(26, 26, 46, 0.06);
+      padding: 0.15rem 0.45rem;
+      border-radius: 8px;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.95rem;
+      color: var(--dark-text);
+    }
+
+    .formula-banner {
+      padding: 0.8rem 1rem;
+      border-radius: 12px;
+      background: rgba(33, 115, 70, 0.08);
+      border: 1px solid rgba(33, 115, 70, 0.12);
+      color: var(--dark-text);
+      font-family: "JetBrains Mono", monospace;
+      line-height: 1.5;
+    }
+
+    .truth-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 0.8rem;
+      font-size: 0.94rem;
+    }
+
+    .truth-table th,
+    .truth-table td {
+      padding: 0.55rem 0.6rem;
+      border-bottom: 1px solid rgba(26, 26, 46, 0.08);
+      text-align: left;
+      color: var(--mid-text);
+    }
+
+    .truth-table th {
+      color: var(--dark-text);
+      font-weight: 600;
+    }
+
+    .roadmap-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1rem;
+      width: 100%;
+      max-width: 980px;
+      margin: 0 auto;
+    }
+
+    .roadmap-card {
+      padding: 1.2rem;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.82);
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(26, 26, 46, 0.06);
+      text-align: left;
+    }
+
+    .roadmap-icon {
+      font-size: 1.5rem;
+      margin-bottom: 0.7rem;
+      display: inline-block;
+    }
+
+    .roadmap-card h3 {
+      margin: 0 0 0.5rem;
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 1.08rem;
+    }
+
+    .roadmap-card p {
+      margin: 0;
+      color: var(--mid-text);
+      line-height: 1.5;
+      font-size: 0.96rem;
+    }
+
+    .hero-note {
+      color: var(--light-text);
+      font-size: 0.95rem;
+    }
+
+    .profile-card {
+      display: grid;
+      place-items: center;
+      text-align: center;
+      min-height: 100%;
+      background:
+        radial-gradient(circle at 30% 20%, rgba(240, 155, 26, 0.14), transparent 28%),
+        linear-gradient(135deg, rgba(39, 109, 195, 0.08), rgba(33, 115, 70, 0.04));
+    }
+
+    .avatar {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, rgba(240, 155, 26, 0.85), rgba(39, 109, 195, 0.75));
+      display: grid;
+      place-items: center;
+      color: white;
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+
+    .interactive-box {
+      border: 2px solid var(--orange-brand);
+      padding: 1.3rem;
+      background: white;
+      min-height: 0;
+      overflow: auto;
+    }
+
+    .interactive-instruction {
+      color: var(--mid-text);
+      font-size: 0.98rem;
+      margin: 0;
+    }
+
+    .sim-grid {
+      display: grid;
+      gap: 0.9rem;
+    }
+
+    .sim-grid.cols-2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .sim-controls {
+      display: grid;
+      gap: 0.75rem;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    }
+
+    .control {
+      display: grid;
+      gap: 0.35rem;
+    }
+
+    .control label,
+    .table-caption,
+    .mini-label {
+      color: var(--mid-text);
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-weight: 600;
+    }
+
+    .control input,
+    .control select,
+    .concat-part {
+      width: 100%;
+      border: 1px solid rgba(26, 26, 46, 0.16);
+      border-radius: 8px;
+      padding: 0.55rem 0.7rem;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 1rem;
+      color: var(--dark-text);
+      background: #fff;
+    }
+
+    .result-box {
+      padding: 0.75rem 0.95rem;
+      background: var(--code-bg);
+      color: var(--green-correct);
+      border-radius: 10px;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 1.15rem;
+      line-height: 1.45;
+      min-height: 3rem;
+      display: flex;
+      align-items: center;
+      overflow-x: auto;
+    }
+
+    .result-box.error {
+      color: var(--coral-mistake);
+    }
+
+    .sim-explain {
+      color: var(--mid-text);
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+
+    .data-table,
+    .mini-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.94rem;
+      overflow: hidden;
+    }
+
+    .data-table th,
+    .data-table td,
+    .mini-table th,
+    .mini-table td {
+      padding: 0.55rem 0.65rem;
+      border-bottom: 1px solid rgba(26, 26, 46, 0.08);
+      text-align: left;
+      color: var(--mid-text);
+    }
+
+    .data-table th,
+    .mini-table th {
+      color: var(--dark-text);
+      background: rgba(217, 236, 247, 0.55);
+      font-weight: 600;
+    }
+
+    .row-match {
+      background: rgba(240, 155, 26, 0.12);
+      box-shadow: inset 4px 0 0 var(--orange-brand);
+    }
+
+    .row-dim {
+      opacity: 0.42;
+    }
+
+    .cell-return {
+      background: rgba(79, 157, 105, 0.16);
+      color: var(--green-correct);
+      font-weight: 700;
+      border-radius: 6px;
+    }
+
+    .array-strip {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 0.55rem;
+      margin-top: 0.5rem;
+    }
+
+    .array-cell {
+      border-radius: 10px;
+      padding: 0.65rem 0.6rem;
+      background: rgba(217, 236, 247, 0.72);
+      text-align: center;
+      color: var(--mid-text);
+      border: 1px solid rgba(26, 26, 46, 0.06);
+      transition: background 200ms ease, transform 200ms ease, color 200ms ease;
+    }
+
+    .array-cell.active {
+      background: rgba(240, 155, 26, 0.16);
+      color: var(--dark-text);
+      transform: translateY(-2px);
+      box-shadow: inset 0 0 0 2px rgba(240, 155, 26, 0.45);
+    }
+
+    .array-pos {
+      display: block;
+      margin-top: 0.25rem;
+      font-size: 0.78rem;
+      color: var(--light-text);
+    }
+
+    .tab-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.55rem;
+      margin-bottom: 0.9rem;
+    }
+
+    .tab {
+      padding: 0.55rem 0.85rem;
+      border-radius: 999px;
+      background: rgba(26, 26, 46, 0.06);
+      color: var(--mid-text);
+      transition: background 160ms ease, color 160ms ease;
+    }
+
+    .tab.active {
+      background: var(--orange-brand);
+      color: white;
+    }
+
+    .char-map {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+    }
+
+    .char-cell {
+      min-width: 44px;
+      padding: 0.45rem 0.35rem;
+      border-radius: 10px;
+      text-align: center;
+      background: var(--ice-bg);
+      color: var(--mid-text);
+      font-family: "JetBrains Mono", monospace;
+      border: 1px solid rgba(26, 26, 46, 0.06);
+    }
+
+    .char-cell.active {
+      background: var(--orange-brand);
+      color: white;
+    }
+
+    .char-index {
+      display: block;
+      margin-top: 0.25rem;
+      font-size: 0.72rem;
+      opacity: 0.9;
+    }
+
+    mark {
+      background: rgba(240, 155, 26, 0.3);
+      padding: 0.08rem 0.12rem;
+      border-radius: 4px;
+    }
+
+    .segment-output {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid rgba(26, 26, 46, 0.08);
+    }
+
+    .segment {
+      padding: 0.65rem 0.75rem;
+      font-family: "JetBrains Mono", monospace;
+      font-size: 1.05rem;
+      color: var(--dark-text);
+    }
+
+    .spaces-view {
+      padding: 0.75rem 0.95rem;
+      border-radius: 10px;
+      background: rgba(30, 30, 46, 0.04);
+      font-family: "JetBrains Mono", monospace;
+      line-height: 1.5;
+      color: var(--mid-text);
+      word-break: break-all;
+    }
+
+    .removed-space {
+      color: var(--coral-mistake);
+      font-weight: 700;
+    }
+
+    .compare-panels {
+      display: grid;
+      gap: 1rem;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .compare-panel {
+      border: 1px solid rgba(26, 26, 46, 0.08);
+      border-radius: 14px;
+      padding: 1rem;
+      background: rgba(246, 249, 252, 0.75);
+    }
+
+    .difference-banner {
+      padding: 0.85rem 1rem;
+      background: rgba(240, 155, 26, 0.1);
+      border-radius: 10px;
+      border-left: 4px solid var(--orange-brand);
+      color: var(--mid-text);
+      font-size: 0.95rem;
+    }
+
+    .workflow-step {
+      padding: 1rem 1rem 1.05rem;
+      border-radius: 14px;
+      border: 1px solid rgba(26, 26, 46, 0.08);
+      background: rgba(255, 255, 255, 0.85);
+      box-shadow: var(--shadow-soft);
+      position: relative;
+    }
+
+    .step-number {
+      position: absolute;
+      top: 0.8rem;
+      right: 0.8rem;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: var(--orange-brand);
+      color: white;
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+    }
+
+    .pipeline-code {
+      margin-top: 0.75rem;
+      padding: 0.8rem 0.9rem;
+      background: var(--code-bg);
+      color: var(--code-text);
+      border-radius: 10px;
+      font-size: 0.93rem;
+      white-space: pre-wrap;
+    }
+
+    .warning-card {
+      border-left: 6px solid var(--coral-mistake);
+      background: rgba(217, 108, 108, 0.08);
+    }
+
+    .join-visual {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 1rem;
+      align-items: start;
+    }
+
+    .join-arrow {
+      align-self: center;
+      font-size: 1.5rem;
+      color: var(--orange-brand);
+      font-weight: 700;
+    }
+
+    .footer-ui {
+      position: fixed;
+      inset: auto 0 1.2rem 0;
+      z-index: 70;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+    }
+
+    .footer-bar {
+      pointer-events: auto;
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      padding: 0.55rem 0.8rem;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.82);
+      border: 1px solid rgba(26, 26, 46, 0.08);
+      box-shadow: var(--shadow-soft);
+      backdrop-filter: blur(10px);
+    }
+
+    .keyboard-hint {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      color: var(--mid-text);
+      font-size: 0.95rem;
+    }
+
+    .keycap {
+      min-width: 34px;
+      height: 34px;
+      padding: 0 0.55rem;
+      border-radius: 10px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(26, 26, 46, 0.06);
+      color: var(--dark-text);
+      font-family: "JetBrains Mono", monospace;
+      font-size: 0.95rem;
+      box-shadow: inset 0 -1px 0 rgba(26, 26, 46, 0.08);
+    }
+
+    #slide-counter {
+      position: fixed;
+      right: 1.6rem;
+      bottom: 1.5rem;
+      z-index: 70;
+      color: var(--light-text);
+      font-size: 0.95rem;
+      background: rgba(255, 255, 255, 0.78);
+      border: 1px solid rgba(26, 26, 46, 0.08);
+      box-shadow: var(--shadow-soft);
+      border-radius: 999px;
+      padding: 0.6rem 0.9rem;
+      backdrop-filter: blur(10px);
+    }
+
+    #overview {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      background: rgba(15, 20, 28, 0.6);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      backdrop-filter: blur(8px);
+    }
+
+    #overview.open {
+      display: flex;
+    }
+
+    .overview-panel {
+      width: min(1100px, 100%);
+      max-height: 85vh;
+      overflow: auto;
+      padding: 1.5rem;
+      border-radius: 22px;
+      background: white;
+      box-shadow: 0 28px 80px rgba(15, 20, 28, 0.24);
+    }
+
+    .overview-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .overview-header h2 {
+      margin: 0;
+      font-family: "Space Grotesk", sans-serif;
+      font-size: 1.8rem;
+    }
+
+    .overview-grid {
+      display: grid;
+      gap: 1rem;
+      grid-template-columns: 1fr;
+    }
+
+    .overview-group {
+      display: grid;
+      gap: 0.65rem;
+      align-content: start;
+    }
+
+    .overview-group h3 {
+      margin: 0;
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--light-text);
+    }
+
+    .overview-item {
+      text-align: left;
+      padding: 0.85rem 0.95rem;
+      border-radius: 12px;
+      border: 1px solid rgba(26, 26, 46, 0.08);
+      background: rgba(246, 249, 252, 0.9);
+      color: var(--mid-text);
+      transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
+    }
+
+    .overview-item:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-soft);
+      border-color: rgba(240, 155, 26, 0.28);
+    }
+
+    .overview-item strong {
+      display: block;
+      color: var(--dark-text);
+      margin-bottom: 0.2rem;
+    }
+
+    @media (max-width: 980px) {
+      .slide {
+        padding: 3rem 1.2rem 5rem;
+      }
+
+      .layout-intro .content-grid,
+      .layout-concept .content-grid,
+      .layout-compare .content-grid,
+      .layout-warning .content-grid,
+      .layout-workflow .content-grid,
+      .grid-3,
+      .grid-4,
+      .roadmap-grid,
+      .compare-panels,
+      .join-visual {
+        grid-template-columns: 1fr;
+      }
+
+      .grid-2,
+      .sim-grid.cols-2 {
+        grid-template-columns: 1fr;
+      }
+
+      .slide-shell {
+        gap: 1rem;
+      }
+    }
+
+    @media (max-width: 720px) {
+
+      html,
+      body {
+        overflow: auto;
+      }
+
+      #deck {
+        height: auto;
+        min-height: 100vh;
+      }
+
+      .slide {
+        position: relative;
+        min-height: 100vh;
+        transform: none;
+        opacity: 1;
+        pointer-events: auto;
+        display: none;
+        overflow: visible;
+      }
+
+      .slide.active {
+        display: flex;
+      }
+
+      .slide::before {
+        inset: 0.75rem;
+      }
+
+      #top-hint {
+        left: 1rem;
+        right: 1rem;
+        text-align: center;
+      }
+
+      .footer-ui,
+      #slide-counter {
+        position: sticky;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div id="progress" aria-hidden="true"></div>
+  <div id="top-hint">Press <span class="inline-formula">Esc</span> to open the slide summary</div>
+  <div id="deck" aria-live="polite"></div>
+
+  <div class="footer-ui">
+    <div class="footer-bar" aria-label="Slide navigation">
+      <div class="keyboard-hint">
+        <span class="keycap">&#8592;</span>
+        <span class="keycap">&#8594;</span>
+        <span>Use arrow keys to navigate slides</span>
+      </div>
+    </div>
+  </div>
+
+  <div id="slide-counter">1 / 28</div>
+
+  <div id="overview" aria-hidden="true">
+    <div class="overview-panel">
+      <div class="overview-header">
+        <h2>Slide Overview</h2>
+        <button class="keycap" id="close-overview" aria-label="Close overview">&#10005;</button>
+      </div>
+      <div class="overview-grid" id="overview-grid"></div>
+    </div>
+  </div>
+
+  <script>
+    const slides = [
+      {
+        title: "COMM 205 Exam B Review",
+        section: null,
+        overview: "Intro",
+        className: "layout-hero",
+        render: () => `
+          <div class="slide-shell hero-shell">
+            <div class="badge-row">
+              <div class="badge">Final Exam</div>
+            </div>
+            <div>
+              <h1 class="hero-title">COMM 205 Exam B Review</h1>
+              <p class="hero-subtitle">Excel + R — Functions, Wrangling, and Exam Patterns</p>
+            </div>
+            <p class="hero-meta">We'll be starting soon! Please take some time for yourself.</p>
+            <p class="hero-note">Open the slide overview with <span class="inline-formula">Esc</span>.</p>
+          </div>
+        `
+      },
+      {
+        title: "Land Acknowledgement",
+        section: null,
+        overview: "Intro",
+        className: "layout-hero",
+        render: () => `
+          <div class="slide-shell hero-shell">
+            <div>
+              <h1 class="hero-title">Land Acknowledgement</h1>
+              <p class="hero-subtitle">We would like to acknowledge that this COMM 205 final review session takes place on the unceded territory of the xʷməθkʷəy̓əm (Musqueam) and səlilwətaɬ (Tsleil-Waututh) Nations.</p>
+              <p class="hero-meta">As someone with the CMP, we are grateful to operate on the University of British Columbia’s Point Grey Campus, and we encourage all attendees to take some time to understand the history of this land and move towards reconciliation.</p>
+            </div>
+          </div>
+        `
+      },
+      {
+        title: "Who am I?",
+        section: null,
+        overview: "Intro",
+        className: "layout-intro",
+        render: () => `
+          <div class="slide-shell">
+            <header class="slide-header">
+              <h1 class="slide-title">Who am I?</h1>
+              <p class="slide-subtitle">A short intro so students know who is teaching and why the session is structured this way.</p>
+            </header>
+            <div class="slide-body">
+              <div class="content-grid">
+                <div class="card">
+                  <h3>Suggested talking points</h3>
+                  <ul>
+                    <li>Presenter name and a short bio.</li>
+                    <li>Why you care about teaching this material.</li>
+                    <li>Relevant course, tutoring, TA, or industry experience.</li>
+                    <li>One sentence that signals you understand where students usually get stuck.</li>
+                  </ul>
+                </div>
+                <div class="card profile-card">
+                  <div>
+                    <div class="avatar">KG</div>
+                    <h3>Presenter Placeholder</h3>
+                    <p>Swap this card with your own photo, initials, or a brief bio before presenting.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        `
+      },
+      {
+        title: "Overview & Housekeeping",
+        section: null,
+        overview: "Intro",
+        className: "layout-intro",
+        render: () => `
+          <div class="slide-shell">
+            <header class="slide-header">
+              <h1 class="slide-title">Overview &amp; Housekeeping</h1>
+              <p class="slide-subtitle">Frame the session structure before the content gets dense.</p>
+            </header>
+            <div class="slide-body">
+              <div class="content-grid">
+                <div class="card">
+                  <h3>Session structure</h3>
+                  <ul>
+                    <li><strong>Access these slides:</strong> <span class="inline-formula">bit.ly/[shortlink]</span></li>
+                    <li><strong>Part 1:</strong> lecture-style review of every Excel function and R concept in Exam B.</li>
+                    <li><strong>Part 2:</strong> hands-on mini-projects in Excel and R.</li>
+                    <li>The interactive demos let students experiment live during and after the walkthrough.</li>
+                  </ul>
+                </div>
+                <div class="card">
+                  <h3>How to use this session</h3>
+                  <ul>
+                    <li>Focus on patterns instead of memorizing every line.</li>
+                    <li>Flag anything confusing now and revisit it in practice time.</li>
+                    <li>Try to predict the output before reading the answer.</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="callout-row">
+                <div class="callout takeaway">
+                  <div class="callout-icon">✓</div>
+                  <div><h3>Goal</h3><p>Leave with a short list of weak spots to practice tonight, not a screenshot dump of every slide.</p></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        `
+      },
+      {
+        title: "Excel Review",
+        section: "EXCEL",
+        overview: "Excel",
+        className: "layout-hero",
+        sectionColor: "var(--excel-green)",
+        render: () => `
+          <div class="slide-shell hero-shell" style="--section-color: var(--excel-green);">
+            <div class="section-label">EXCEL</div>
+            <div>
+              <h1 class="hero-title">Excel Review</h1>
+              <p class="hero-subtitle">Lectures 10–16 · 7 function families</p>
+            </div>
+            <div class="roadmap-grid">
+              ${[
+            ["🔀", "Conditionals", "AND, OR, IF, nested IF"],
+            ["📊", "Conditional Aggregation", "COUNTIFS, SUMIFS"],
+            ["🔍", "Lookups", "VLOOKUP, INDEX, MATCH"],
+            ["✂️", "Text Extraction", "LEFT, RIGHT, MID, CONCATENATE"],
+            ["🧹", "Text Cleanup", "LEN, TRIM, SUBSTITUTE, REPLACE"],
+            ["🔎", "Text Search", "FIND, SEARCH"]
+          ].map(([icon, label, functions]) => `
+                <div class="roadmap-card">
+                  <span class="roadmap-icon">${icon}</span>
+                  <h3>${label}</h3>
+                  <p class="mono">${functions}</p>
+                </div>
+              `).join("")}
+            </div>
+            <p class="hero-meta">For Excel questions, the first move is usually to identify the function family before worrying about the exact syntax.</p>
+          </div>
+        `
+      },
+      {
+        title: "Conditionals: AND & OR",
+        section: "EXCEL",
+        overview: "Excel",
+        className: "layout-compare",
+        sectionColor: "var(--excel-green)",
+        render: () => `
+          <div class="slide-shell" style="--section-color: var(--excel-green);">
+            <header class="slide-header">
+              <div class="section-label">EXCEL</div>
+              <h1 class="slide-title">Conditionals: AND &amp; OR</h1>
+              <p class="slide-subtitle">These are the logic operators that sit underneath many IF statements.</p>
+            </header>
+            <div class="slide-body">
+              <div class="content-grid">
+                <div class="card">
+                  <h3>AND( )</h3>
+                  <p>Returns TRUE only if <strong>all</strong> conditions are true.</p>
+                  <div class="formula-banner">=AND(score &gt;= 50, attendance &gt;= 80)</div>
+                  <p style="margin-top:0.8rem;">Think of a checklist: every box must be checked.</p>
+                  <table class="truth-table">
+                    <thead><tr><th>A</th><th>B</th><th>Result</th></tr></thead>
+                    <tbody>
+                      <tr><td>TRUE</td><td>TRUE</td><td>TRUE</td></tr>
+                      <tr><td>TRUE</td><td>FALSE</td><td>FALSE</td></tr>
+                      <tr><td>FALSE</td><td>TRUE</td><td>FALSE</td></tr>
+                      <tr><td>FALSE</td><td>FALSE</td><td>FALSE</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="card">
+                  <h3>OR( )</h3>
+                  <p>Returns TRUE if <strong>any</strong> condition is true.</p>
+                  <div class="formula-banner">=OR(dept = "Sales", dept = "Marketing")</div>
+                  <p style="margin-top:0.8rem;">Think of a door with multiple keys: any one key opens it.</p>
+                  <table class="truth-table">
+                    <thead><tr><th>A</th><th>B</th><th>Result</th></tr></thead>
+                    <tbody>
+                      <tr><td>TRUE</td><td>TRUE</td><td>TRUE</td></tr>
+                      <tr><td>TRUE</td><td>FALSE</td><td>TRUE</td></tr>
+                      <tr><td>FALSE</td><td>TRUE</td><td>TRUE</td></tr>
+                      <tr><td>FALSE</td><td>FALSE</td><td>FALSE</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="callout-row">
+                <div class="callout exam-tip"><div class="callout-icon">💡</div><div><h3>Exam Tip</h3><p>When a question says <strong>both</strong> or <strong>all</strong>, think AND. When it says <strong>either</strong> or <strong>any</strong>, think OR.</p></div></div>
+                <div class="callout mistake"><div class="callout-icon">⚠️</div><div><h3>Common Mistake</h3><p>If even one condition is FALSE, AND returns FALSE. Students often accidentally use OR and make the logic too loose.</p></div></div>
+              </div>
+            </div>
+          </div>
+        `
+      },
+      {
+        title: "IF & Nested IF",
+        section: "EXCEL",
+        overview: "Excel",
+        className: "layout-interactive",
+        sectionColor: "var(--excel-green)",
+        interactiveId: "if-simulator",
+        render: () => `
+          <div class="slide-shell" style="--section-color: var(--excel-green);">
+            <header class="slide-header">
+              <div class="section-label">EXCEL</div>
+              <h1 class="slide-title">IF &amp; Nested IF</h1>
+              <p class="slide-subtitle">IF returns one value when a condition is true and another when it is false. Nested IF adds more branches.</p>
+            </header>
+            <div class="slide-body">
+              <div class="content-grid">
+                <div class="card">
+                  <h3>Read it in order</h3>
+                  <p>Basic syntax:</p>
+                  <div class="formula-banner">=IF(condition, value_if_true, value_if_false)</div>
+                  <p style="margin-top:0.85rem;">Nested syntax:</p>
+                  <div class="code-block">=IF(score&gt;=90, "A", IF(score&gt;=80, "B", IF(score&gt;=70, "C", "F")))</div>
+                  <p style="margin-top:0.8rem;">For nested IF, the first TRUE condition wins.</p>
+                </div>
+                ${simulatorShell("Try changing the value, operator, and labels. The formula and result update instantly.", "if-simulator")}
+              </div>
+              <div class="callout-row">
+                <div class="callout exam-tip"><div class="callout-icon">💡</div><div><h3>Exam Tip</h3><p>Trace nested IFs from the outside in. Test each condition in order and stop at the first TRUE.</p></div></div>
+                <div class="callout mistake"><div class="callout-icon">⚠️</div><div><h3>Common Mistake</h3><p>Mismatched parentheses. Count your opening and closing parentheses before trusting the formula.</p></div></div>
+              </div>
+            </div>
+          </div>
+        `
+      },
+      {
+        title: "COUNTIFS",
+        section: "EXCEL",
+        overview: "Excel",
+        className: "layout-interactive",
+        sectionColor: "var(--excel-green)",
+        interactiveId: "countifs-simulator",
+        render: () => `
+          <div class="slide-shell" style="--section-color: var(--excel-green);">
+            <header class="slide-header">
+              <div class="section-label">EXCEL</div>
+              <h1 class="slide-title">COUNTIFS</h1>
+              <p class="slide-subtitle">COUNTIFS counts rows that satisfy all listed criteria.</p>
+            </header>
+            <div class="slide-body">
+              <div class="content-grid">
+                <div class="card">
+                  <h3>Syntax</h3>
+                  <div class="formula-banner">=COUNTIFS(criteria_range1, criteria1, criteria_range2, criteria2, ...)</div>
+                  <ul style="margin-top:0.8rem;">
+                    <li>Each criterion is a range plus a value to match.</li>
+                    <li>The criteria behave like AND logic.</li>
+                    <li>All ranges need the same size and shape.</li>
+                  </ul>
+                </div>
+                ${simulatorShell("Filter the table by Region and Status. Matching rows are highlighted.", "countifs-simulator")}
+              </div>
+              <div class="callout-row">
+                <div class="callout exam-tip"><div class="callout-icon">💡</div><div><h3>Exam Tip</h3><p>COUNTIFS always returns a count. If you want a total from another column, you probably need SUMIFS instead.</p></div></div>
+                <div class="callout mistake"><div class="callout-icon">⚠️</div><div><h3>Common Mistake</h3><p>Students often forget that a row must match both criteria to be counted.</p></div></div>
+              </div>
+            </div>
+          </div>
+        `
+      },
+      {
+        title: "SUMIFS",
+        section: "EXCEL",
+        overview: "Excel",
+        className: "layout-interactive",
+        sectionColor: "var(--excel-green)",
+        interactiveId: "sumifs-simulator",
+        render: () => `
+          <div class="slide-shell" style="--section-color: var(--excel-green);">
+            <header class="slide-header">
+              <div class="section-label">EXCEL</div>
+              <h1 class="slide-title">SUMIFS</h1>
+              <p class="slide-subtitle">SUMIFS adds values in one column, but only for rows that satisfy all criteria.</p>
+            </header>
+            <div class="slide-body">
+              <div class="content-grid">
+                <div class="card">
+                  <h3>Argument order matters</h3>
+                  <div class="formula-banner">=SUMIFS(sum_range, criteria_range1, criteria1, criteria_range2, criteria2, ...)</div>
+                  <p style="margin-top:0.8rem;">The <strong>sum range comes first</strong>. That is the most common trap on this topic.</p>
+                </div>
+                ${simulatorShell("Use the same Region and Status filters. This time the simulator sums the Sales column.", "sumifs-simulator")}
+              </div>
+              <div class="callout-row">
+                <div class="callout exam-tip"><div class="callout-icon">💡</div><div><h3>Exam Tip</h3><p>COUNTIFS counts matching rows. SUMIFS totals a target column for matching rows. Same criteria logic, different output.</p></div></div>
+                <div class="callout mistake"><div class="callout-icon">⚠️</div><div><h3>Common Mistake</h3><p>Putting a criteria range before the sum range. In SUMIFS, the sum range must be first.</p></div></div>
+              </div>
+            </div>
+          </div>
+        `
+      },
+      {
+        title: "VLOOKUP",
+        section: "EXCEL",
+        overview: "Excel",
+        className: "layout-interactive",
+        sectionColor: "var(--excel-green)",
+        interactiveId: "vlookup-simulator",
+        render: () => `
+          <div class="slide-shell" style="--section-color: var(--excel-green);">
+            <header class="slide-header">
+              <div class="section-label">EXCEL</div>
+              <h1 class="slide-title">VLOOKUP</h1>
+              <p class="slide-subtitle">VLOOKUP searches the first column of a table and returns a value from another column in the same row.</p>
+            </header>
+            <div class="slide-body">
+              <div class="content-grid">
+                <div class="card">
+                  <h3>Key parameters</h3>
+                  <div class="formula-banner">=VLOOKUP(lookup_value, table_array, col_index_num, [range_lookup])</div>
+                  <ul style="margin-top:0.8rem;">
+                    <li><strong>lookup_value</strong>: what you are searching for</li>
+                    <li><strong>col_index_num</strong>: which column to return, starting at 1</li>
+                    <li><strong>FALSE</strong>: exact match, usually what the exam wants</li>
+                  </ul>
+                  <p style="margin-top:0.8rem;">VLOOKUP only works left to right. The lookup column must be the first column in the table.</p>
+                </div>
+                ${simulatorShell("Search the first column for an employee ID, then return the chosen column from the same row.", "vlookup-simulator")}
+              </div>
+              <div class="callout-row">
+                <div class="callout exam-tip"><div class="callout-icon">💡</div><div><h3>Exam Tip</h3><p>Use FALSE for exact match unless a question explicitly says approximate. Column indexes start at 1, not 0.</p></div></div>
+                <div class="callout mistake"><div class="callout-icon">⚠️</div><div><h3>Common Mistake</h3><p>Students often choose the wrong return column because they forget that column 1 is the lookup column itself.</p></div></div>
+              </div>
+            </div>
+          </div>
+        `
+      },
+      {
+        title: "INDEX",
+        section: "EXCEL",
+        overview: "Excel",
+        className: "layout-interactive",
+        sectionColor: "var(--excel-green)",
+        interactiveId: "index-match-simulator",
+        defaultTab: "index",
+        render: () => `
+          <div class="slide-shell" style="--section-color: var(--excel-green);">
+            <header class="slide-header">
+              <div class="section-label">EXCEL</div>
+              <h1 class="slide-title">INDEX</h1>
+              <p class="slide-subtitle">INDEX returns the value stored at a given position in a range.</p>
+            </header>
+            <div class="slide-body">
+              <div class="content-grid">
+                <div class="card">
+                  <h3>INDEX retrieves by position</h3>
+                  <div class="formula-banner">=INDEX(array, row_num)</div>
+                  <p style="margin-top:0.8rem;">INDEX is not a search tool by itself. It just answers: <em>what value sits at position N?</em></p>
+                </div>
+                ${simulatorShell("This simulator has three tabs. On this slide, start with the INDEX only view.", "index-match-simulator")}
+              </div>
+              <div class="callout-row">
+                <div class="callout exam-tip"><div class="callout-icon">💡</div><div><h3>Exam Tip</h3><p>INDEX gives back a value. It does not figure out the position for you.</p></div></div>
+                <div class="callout mistake"><div class="callout-icon">⚠️</div><div><h3>Common Mistake</h3><p>Confusing INDEX with VLOOKUP. INDEX retrieves. MATCH searches.</p></div></div>
+              </div>
+            </div>
+          </div>
+        `
+      },
+      {
+        title: "MATCH",
+        section: "EXCEL",
+        overview: "Excel",
+        className: "layout-interactive",
+        sectionColor: "var(--excel-green)",
+        interactiveId: "index-match-simulator",
+        defaultTab: "match",
+        render: () => `
+          <div class="slide-shell" style="--section-color: var(--excel-green);">
+            <header class="slide-header">
+              <div class="section-label">EXCEL</div>
+              <h1 class="slide-title">MATCH</h1>
+              <p class="slide-subtitle">MATCH searches a range and returns the position of the match.</p>
+            </header>
+            <div class="slide-body">
+              <div class="content-grid">
+                <div class="card">
+                  <h3>MATCH returns a position number</h3>
+                  <div class="formula-banner">=MATCH(lookup_value, lookup_array, match_type)</div>
+                  <p style="margin-top:0.8rem;">For exam questions, <span class="inline-formula">0</span> usually means exact match.</p>
+                  <p style="margin-top:0.8rem;">MATCH answers: <em>where is this item in the list?</em></p>
+                </div>
+                ${simulatorShell("Switch to the MATCH only tab to see how the position changes when the lookup value changes.", "index-match-simulator")}
+              </div>
+              <div class="callout-row">
+                <div class="callout exam-tip"><div class="callout-icon">💡</div><div><h3>Exam Tip</h3><p>MATCH returns a number, not the value itself. That number is usually fed into INDEX.</p></div></div>
+                <div class="callout mistake"><div class="callout-icon">⚠️</div><div><h3>Common Mistake</h3><p>Forgetting exact match mode. If you omit <span class="inline-formula">0</span>, MATCH can behave differently than expected.</p></div></div>
+              </div>
+            </div>
+          </div>
+        `
+      },
+      {
+        title: "INDEX + MATCH Together",
+        section: "EXCEL",
+        overview: "Excel",
+        className: "layout-interactive",
+        sectionColor: "var(--excel-green)",
+        interactiveId: "index-match-simulator",
+        defaultTab: "combo",
+        render: () => `
+          <div class="slide-shell" style="--section-color: var(--excel-green);">
+            <header class="slide-header">
+              <div class="section-label">EXCEL</div>
+              <h1 class="slide-title">INDEX + MATCH Together</h1>
+              <p class="slide-subtitle">MATCH finds the position. INDEX uses that position to return the value you want.</p>
+            </header>
+            <div class="slide-body">
+              <div class="content-grid">
+                <div class="card">
+                  <h3>Why combine them?</h3>
+                  <div class="formula-banner">=INDEX(return_range, MATCH(lookup_value, lookup_range, 0))</div>
+                  <ul style="margin-top:0.8rem;">
+                    <li>More flexible than VLOOKUP.</li>
+                    <li>Can look in any direction.</li>
+                    <li>The lookup column does not need to be first.</li>
+                  </ul>
+                </div>
+                ${simulatorShell("Use the INDEX + MATCH tab and read the trace from the inside out: MATCH first, then INDEX.", "index-match-simulator")}
+              </div>
+              <div class="callout-row">
+                <div class="callout exam-tip"><div class="callout-icon">💡</div><div><h3>Exam Tip</h3><p>If the lookup column is not the first column, INDEX + MATCH is usually the safer tool.</p></div></div>
+                <div class="callout mistake"><div class="callout-icon">⚠️</div><div><h3>Common Mistake</h3><p>Students often use the wrong range for MATCH and the wrong range for INDEX. MATCH searches one range; INDEX returns from another.</p></div></div>
+              </div>
+            </div>
+          </div>
+        `
+      },
+      {
+        title: "Text Extraction: LEFT, RIGHT, MID",
+        section: "EXCEL",
+        overview: "Excel",
+        className: "layout-interactive",
+        sectionColor: "var(--excel-green)",
+        interactiveId: "text-function-simulator",
+        render: () => `
+          <div class="slide-shell" style="--section-color: var(--excel-green);">
+            <header class="slide-header">
+              <div class="section-label">EXCEL</div>
+              <h1 class="slide-title">Text Extraction: LEFT, RIGHT, MID</h1>
+              <p class="slide-subtitle">Treat the string like a numbered row of boxes and highlight the segment you want to pull out.</p>
+            </header>
+            <div class="slide-body">
+              <div class="content-grid">
+                <div class="card">
+                  <h3>Function family</h3>
+                  <ul>
+                    <li><span class="inline-formula">=LEFT(text, num_chars)</span> extracts from the start.</li>
+                    <li><span class="inline-formula">=RIGHT(text, num_chars)</span> extracts from the end.</li>
+                    <li><span class="inline-formula">=MID(text, start_num, num_chars)</span> extracts from any position.</li>
+                  </ul>
+                </div>
+                ${simulatorShell("Switch between LEFT, RIGHT, and MID. The highlighted character map shows exactly what each function is extracting.", "text-function-simulator")}
+              </div>
+              <div class="callout-row">
+                <div class="callout exam-tip"><div class="callout-icon">💡</div><div><h3>Exam Tip</h3><p>Character positions start at 1, not 0. That matters most with MID.</p></div></div>
+                <div class="callout mistake"><div class="callout-icon">⚠️</div><div><h3>Common Mistake</h3><p>Off-by-one errors. If you want characters 6 to 9, use <span class="inline-formula">MID(text, 6, 4)</span>.</p></div></div>
+              </div>
+            </div>
+          </div>
+        `
+      },
+      {
+        title: "CONCATENATE",
+        section: "EXCEL",
+        overview: "Excel",
+        className: "layout-interactive",
+        sectionColor: "var(--excel-green)",
+        interactiveId: "concat-simulator",
+        render: () => `
+          <div class="slide-shell" style="--section-color: var(--excel-green);">
+            <header class="slide-header">
+              <div class="section-label">EXCEL</div>
+              <h1 class="slide-title">CONCATENATE</h1>
+              <p class="slide-subtitle">CONCATENATE joins pieces of text together in order.</p>
+            </header>
+            <div class="slide-body">
+              <div class="content-grid">
+                <div class="card">
+                  <h3>Joining text</h3>
+                  <div class="formula-banner">=CONCATENATE(text1, text2, text3, ...)</div>
+                  <p style="margin-top:0.8rem;">Spaces are not added automatically. If you want a space, add <span class="inline-formula">" "</span> as its own argument.</p>
+                </div>
+                ${simulatorShell("Edit the parts or add new ones. Each segment keeps its own color band so the joined output is easy to parse.", "concat-simulator")}
+              </div>
+              <div class="callout-row">
+                <div class="callout exam-tip"><div class="callout-icon">💡</div><div><h3>Exam Tip</h3><p>If the final string runs words together, you probably forgot to include a space as a separate argument.</p></div></div>
+                <div class="callout mistake"><div class="callout-icon">⚠️</div><div><h3>Common Mistake</h3><p><span class="inline-formula">CONCATENATE("Hello", "World")</span> returns <span class="inline-formula">HelloWorld</span>, not <span class="inline-formula">Hello World</span>.</p></div></div>
+              </div>
+            </div>
+          </div>
+        `
+      },
+      {
+        title: "LEN & TRIM",
+        section: "EXCEL",
+        overview: "Excel",
+        className: "layout-interactive",
+        sectionColor: "var(--excel-green)",
+        interactiveId: "len-trim-simulator",
+        render: () => `
+          <div class="slide-shell" style="--section-color: var(--excel-green);">
+            <header class="slide-header">
+              <div class="section-label">EXCEL</div>
+              <h1 class="slide-title">LEN &amp; TRIM</h1>
+              <p class="slide-subtitle">LEN counts characters, including spaces. TRIM removes unwanted extra spaces.</p>
+            </header>
+            <div class="slide-body">
+              <div class="content-grid">
+                <div class="card">
+                  <h3>Cleanup pair</h3>
+                  <ul>
+                    <li><span class="inline-formula">=LEN(text)</span> returns the number of characters, including spaces.</li>
+                    <li><span class="inline-formula">=TRIM(text)</span> removes leading and trailing spaces and compresses multiple internal spaces to single spaces.</li>
+                  </ul>
+                  <p style="margin-top:0.8rem;">Extra spaces are a common reason lookups fail unexpectedly.</p>
+                </div>
+                ${simulatorShell("Visible dots show every space character so students can see exactly what LEN is counting and what TRIM removes.", "len-trim-simulator")}
+              </div>
+              <div class="callout-row">
+                <div class="callout exam-tip"><div class="callout-icon">💡</div><div><h3>Exam Tip</h3><p>If a lookup or comparison should work but does not, hidden spaces are a common suspect. TRIM is your first cleanup tool.</p></div></div>
+                <div class="callout mistake"><div class="callout-icon">⚠️</div><div><h3>Common Mistake</h3><p>Students often assume LEN counts only visible characters. Spaces count too.</p></div></div>
+              </div>
+            </div>
+          </div>
+        `
+      },
+      {
+        title: "SUBSTITUTE vs REPLACE",
+        section: "EXCEL",
+        overview: "Excel",
+        className: "layout-interactive",
+        sectionColor: "var(--excel-green)",
+        interactiveId: "substitute-replace-simulator",
+        render: () => `
+          <div class="slide-shell" style="--section-color: var(--excel-green);">
+            <header class="slide-header">
+              <div class="section-label">EXCEL</div>
+              <h1 class="slide-title">SUBSTITUTE vs REPLACE</h1>
+              <p class="slide-subtitle">SUBSTITUTE replaces by content. REPLACE swaps characters by position.</p>
+            </header>
+            <div class="slide-body">
+              <div class="content-grid">
+                <div class="card">
+                  <h3>Choose by wording</h3>
+                  <ul>
+                    <li>If the question says <strong>replace all occurrences of a character or word</strong>, think SUBSTITUTE.</li>
+                    <li>If the question says <strong>replace the characters at position X</strong>, think REPLACE.</li>
+                  </ul>
+                </div>
+                ${simulatorShell("The two panels share the same text input so students can compare replacing by content and replacing by position side by side.", "substitute-replace-simulator")}
+              </div>
+              <div class="callout-row">
+                <div class="callout exam-tip"><div class="callout-icon">💡</div><div><h3>Exam Tip</h3><p>SUBSTITUTE finds matches by what the text says. REPLACE acts on where the text sits.</p></div></div>
+                <div class="callout mistake"><div class="callout-icon">⚠️</div><div><h3>Common Mistake</h3><p>Students often think SUBSTITUTE changes only the first match. By default it changes every match.</p></div></div>
+              </div>
+            </div>
+          </div>
+        `
+      },
+      {
+        title: "FIND vs SEARCH",
+        section: "EXCEL",
+        overview: "Excel",
+        className: "layout-interactive",
+        sectionColor: "var(--excel-green)",
+        interactiveId: "find-search-simulator",
+        render: () => `
+          <div class="slide-shell" style="--section-color: var(--excel-green);">
+            <header class="slide-header">
+              <div class="section-label">EXCEL</div>
+              <h1 class="slide-title">FIND vs SEARCH</h1>
+              <p class="slide-subtitle">Both return a starting position. FIND is case-sensitive. SEARCH is case-insensitive.</p>
+            </header>
+            <div class="slide-body">
+              <div class="content-grid">
+                <div class="card">
+                  <h3>Classic comparison</h3>
+                  <ul>
+                    <li><span class="inline-formula">FIND(find_text, within_text)</span> is case-sensitive.</li>
+                    <li><span class="inline-formula">SEARCH(find_text, within_text)</span> ignores case.</li>
+                    <li>Both return a position number, not TRUE/FALSE.</li>
+                  </ul>
+                </div>
+                ${simulatorShell("Try searching for the wrong case, then change it. The character map highlights where SEARCH succeeds.", "find-search-simulator")}
+              </div>
+              <div class="callout-row">
+                <div class="callout exam-tip"><div class="callout-icon">💡</div><div><h3>Exam Tip</h3><p>Mnemonic: FIND is fussy about case. SEARCH is soft about case.</p></div></div>
+                <div class="callout mistake"><div class="callout-icon">⚠️</div><div><h3>Common Mistake</h3><p>Students remember the sensitivity difference but forget what the functions return. The output is the starting position.</p></div></div>
+              </div>
+            </div>
+          </div>
+        `
+      },
+      {
+        title: "R Programming Basics",
+        section: "R",
+        overview: "R",
+        className: "layout-concept",
+        sectionColor: "var(--r-blue)",
+        render: () => `
+          <div class="slide-shell" style="--section-color: var(--r-blue);">
+            <header class="slide-header">
+              <div class="section-label">R</div>
+              <h1 class="slide-title">R Programming Basics</h1>
+              <p class="slide-subtitle">Keep this part focused on the patterns students need to read and interpret on the exam.</p>
+            </header>
+            <div class="slide-body">
+              <div class="content-grid">
+                <div class="card">
+                  <h3>Variables and assignment</h3>
+                  <pre class="code-block">x &lt;- 10
+name &lt;- "Alice"</pre>
+                  <p>Read <span class="inline-formula">&lt;-</span> as “gets.” The variable on the left receives the value on the right.</p>
+                </div>
+                <div class="card">
+                  <h3>Functions and vectors</h3>
+                  <pre class="code-block">mean(c(10, 20, 30))   # 20
+length(c(1, 2, 3))   # 3
+numbers &lt;- c(1, 2, 3, 4, 5)</pre>
+                  <p><span class="inline-formula">c()</span> combines values into a vector. Functions take inputs in parentheses and return outputs.</p>
+                </div>
+              </div>
+              <div class="callout-row">
+                <div class="callout exam-tip"><div class="callout-icon">💡</div><div><h3>Exam Tip</h3><p>R is case-sensitive. <span class="inline-formula">Name</span> and <span class="inline-formula">name</span> are different objects.</p></div></div>
+                <div class="callout mistake"><div class="callout-icon">⚠️</div><div><h3>Common Mistake</h3><p>The course expects <span class="inline-formula">&lt;-</span> for assignment. Avoid mixing assignment syntax with comparison syntax.</p></div></div>
+              </div>
+            </div>
+          </div>
+        `
+      },
+      {
+        title: "Data Types: Numbers & Strings",
+        section: "R",
+        overview: "R",
+        className: "layout-concept",
+        sectionColor: "var(--r-blue)",
+        render: () => `
+          <div class="slide-shell" style="--section-color: var(--r-blue);">
+            <header class="slide-header">
+              <div class="section-label">R</div>
+              <h1 class="slide-title">Data Types: Numbers &amp; Strings</h1>
+              <p class="slide-subtitle">Same value, different type: <span class="inline-formula">42</span> is numeric, but <span class="inline-formula">"42"</span> is text.</p>
+            </header>
+            <div class="slide-body">
+              <div class="content-grid">
+                <div class="card">
+                  <h3>Numeric</h3>
+                  <pre class="code-block">x &lt;- 42
+class(x)   # "numeric"</pre>
+                  <p>Numbers can be used in calculations and comparisons.</p>
+                </div>
+                <div class="card">
+                  <h3>Character (string)</h3>
+                  <pre class="code-block">y &lt;- "Hello"
+class(y)   # "character"
+as.numeric("42")  # 42</pre>
+                  <p>Values in quotes are text, even if they look like numbers.</p>
+                </div>
+              </div>
+              <div class="callout-row">
+                <div class="callout exam-tip"><div class="callout-icon">💡</div><div><h3>Exam Tip</h3><p>If a value appears in quotes, treat it as character data.</p></div></div>
+                <div class="callout mistake"><div class="callout-icon">⚠️</div><div><h3>Common Mistake</h3><p><span class="inline-formula">name &lt;- Alice</span> is invalid because strings need quotes.</p></div></div>
+              </div>
+            </div>
+          </div>
+        `
+      },
+      {
+        title: "Data Types: Booleans & Conditionals",
+        section: "R",
+        overview: "R",
+        className: "layout-concept",
+        sectionColor: "var(--r-blue)",
+        render: () => `
+          <div class="slide-shell" style="--section-color: var(--r-blue);">
+            <header class="slide-header">
+              <div class="section-label">R</div>
+              <h1 class="slide-title">Data Types: Booleans &amp; Conditionals</h1>
+              <p class="slide-subtitle">Logical values in R use the same decision logic as Excel; only the syntax changes.</p>
+            </header>
+            <div class="slide-body">
+              <div class="content-grid">
+                <div class="card">
+                  <h3>Logical values</h3>
+                  <pre class="code-block">is_student &lt;- TRUE
+has_paid &lt;- FALSE
+class(is_student)   # "logical"</pre>
+                  <p>Logical values are uppercase and unquoted.</p>
+                </div>
+                <div class="card">
+                  <h3>Comparisons and operators</h3>
+                  <pre class="code-block">10 == 10   # TRUE
+10 != 5    # TRUE
+TRUE &amp; FALSE   # FALSE
+TRUE | FALSE   # TRUE
+!TRUE          # FALSE</pre>
+                  <p><span class="inline-formula">&amp;</span> means AND, <span class="inline-formula">|</span> means OR, and <span class="inline-formula">!</span> means NOT.</p>
+                </div>
+              </div>
+              <div class="callout-row">
+                <div class="callout exam-tip"><div class="callout-icon">💡</div><div><h3>Exam Tip</h3><p><span class="inline-formula">==</span> checks equality. A single <span class="inline-formula">=</span> is not the same thing.</p></div></div>
+                <div class="callout mistake"><div class="callout-icon">⚠️</div><div><h3>Common Mistake</h3><p><span class="inline-formula">"TRUE"</span> is a character string, not a logical value.</p></div></div>
+              </div>
+            </div>
+          </div>
+        `
+      },
+      {
+        title: "Data Frames",
+        section: "R",
+        overview: "R",
+        className: "layout-concept",
+        sectionColor: "var(--r-blue)",
+        render: () => `
+          <div class="slide-shell" style="--section-color: var(--r-blue);">
+            <header class="slide-header">
+              <div class="section-label">R</div>
+              <h1 class="slide-title">Data Frames</h1>
+              <p class="slide-subtitle">A data frame is R’s version of a spreadsheet table: rows are observations and columns are variables.</p>
+            </header>
+            <div class="slide-body">
+              <div class="content-grid">
+                <div class="card">
+                  <h3>Creation</h3>
+                  <pre class="code-block">df &lt;- data.frame(
+  Name = c("Alice", "Bob", "Carol"),
+  Score = c(85, 92, 78),
+  Pass = c(TRUE, TRUE, TRUE)
+)</pre>
+                </div>
+                <div class="card">
+                  <h3>Access patterns</h3>
+                  <ul>
+                    <li><span class="inline-formula">df$Name</span> gets a whole column.</li>
+                    <li><span class="inline-formula">df[1, ]</span> gets row 1.</li>
+                    <li><span class="inline-formula">df[2, "Score"]</span> gets one cell.</li>
+                    <li><span class="inline-formula">nrow(df)</span> and <span class="inline-formula">ncol(df)</span> count rows and columns.</li>
+                  </ul>
+                  <table class="mini-table" style="margin-top:0.8rem;">
+                    <thead><tr><th>Name</th><th>Score</th><th>Pass</th></tr></thead>
+                    <tbody>
+                      <tr><td>Alice</td><td>85</td><td>TRUE</td></tr>
+                      <tr><td>Bob</td><td>92</td><td>TRUE</td></tr>
+                      <tr><td>Carol</td><td>78</td><td>TRUE</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="callout-row">
+                <div class="callout exam-tip"><div class="callout-icon">💡</div><div><h3>Exam Tip</h3><p><span class="inline-formula">df$Column</span> returns a vector. <span class="inline-formula">df[row, col]</span> targets specific cells.</p></div></div>
+                <div class="callout mistake"><div class="callout-icon">⚠️</div><div><h3>Common Mistake</h3><p>Forgetting the <span class="inline-formula">$</span> when accessing a column by name.</p></div></div>
+              </div>
+            </div>
+          </div>
+        `
+      },
+      {
+        title: "Data Wrangling I: Select & Filter",
+        section: "R",
+        overview: "R",
+        className: "layout-workflow",
+        sectionColor: "var(--r-blue)",
+        render: () => `
+          <div class="slide-shell" style="--section-color: var(--r-blue);">
+            <header class="slide-header">
+              <div class="section-label">R</div>
+              <h1 class="slide-title">Data Wrangling I: Select &amp; Filter</h1>
+              <p class="slide-subtitle">First choose the columns you want, then choose the rows you want.</p>
+            </header>
+            <div class="slide-body">
+              <div class="content-grid">
+                <div class="workflow-step">
+                  <div class="step-number">1</div>
+                  <h3>select()</h3>
+                  <p>Choose which columns to keep.</p>
+                  <div class="pipeline-code">select(df, Name, Score)</div>
+                </div>
+                <div class="workflow-step">
+                  <div class="step-number">2</div>
+                  <h3>filter()</h3>
+                  <p>Choose which rows to keep based on a condition.</p>
+                  <div class="pipeline-code">filter(df, Score &gt;= 80)</div>
+                </div>
+                <div class="workflow-step">
+                  <div class="step-number">3</div>
+                  <h3>Pipe operator</h3>
+                  <p>Read <span class="inline-formula">%&gt;%</span> as “and then.”</p>
+                  <div class="pipeline-code">df %&gt;%
+  select(Name, Score) %&gt;%
+  filter(Score &gt;= 80)</div>
+                </div>
+                <div class="workflow-step">
+                  <div class="step-number">4</div>
+                  <h3>Reading the pipeline</h3>
+                  <p>Take <span class="inline-formula">df</span>, and then keep Name and Score, and then keep only rows with Score at least 80.</p>
+                </div>
+              </div>
+              <div class="callout-row">
+                <div class="callout exam-tip"><div class="callout-icon">💡</div><div><h3>Exam Tip</h3><p><span class="inline-formula">select()</span> works on columns. <span class="inline-formula">filter()</span> works on rows.</p></div></div>
+                <div class="callout mistake"><div class="callout-icon">⚠️</div><div><h3>Common Mistake</h3><p>Students often try to use <span class="inline-formula">filter()</span> to choose columns or <span class="inline-formula">select()</span> to choose rows.</p></div></div>
+              </div>
+            </div>
+          </div>
+        `
+      },
+      {
+        title: "Data Wrangling II: Mutate & Arrange",
+        section: "R",
+        overview: "R",
+        className: "layout-workflow",
+        sectionColor: "var(--r-blue)",
+        render: () => `
+          <div class="slide-shell" style="--section-color: var(--r-blue);">
+            <header class="slide-header">
+              <div class="section-label">R</div>
+              <h1 class="slide-title">Data Wrangling II: Mutate &amp; Arrange</h1>
+              <p class="slide-subtitle">Create new columns, then sort the resulting rows.</p>
+            </header>
+            <div class="slide-body">
+              <div class="content-grid">
+                <div class="workflow-step">
+                  <div class="step-number">1</div>
+                  <h3>mutate()</h3>
+                  <p>Create a new column from existing ones.</p>
+                  <div class="pipeline-code">mutate(df, Grade = ifelse(Score &gt;= 80, "Pass", "Fail"))</div>
+                </div>
+                <div class="workflow-step">
+                  <div class="step-number">2</div>
+                  <h3>arrange()</h3>
+                  <p>Sort rows by a column.</p>
+                  <div class="pipeline-code">arrange(df, Score)
+arrange(df, desc(Score))</div>
+                </div>
+                <div class="workflow-step">
+                  <div class="step-number">3</div>
+                  <h3>Combined pipeline</h3>
+                  <div class="pipeline-code">df %&gt;%
+  mutate(Grade = ifelse(Score &gt;= 80, "Pass", "Fail")) %&gt;%
+  arrange(desc(Score))</div>
+                </div>
+                <div class="workflow-step">
+                  <div class="step-number">4</div>
+                  <h3>Read it aloud</h3>
+                  <p>Take the table, add a Grade column, then sort it from highest score to lowest.</p>
+                </div>
+              </div>
+              <div class="callout-row">
+                <div class="callout exam-tip"><div class="callout-icon">💡</div><div><h3>Exam Tip</h3><p><span class="inline-formula">mutate()</span> adds columns; it does not remove existing ones.</p></div></div>
+                <div class="callout mistake"><div class="callout-icon">⚠️</div><div><h3>Common Mistake</h3><p>For descending order, students forget <span class="inline-formula">desc()</span> and accidentally sort smallest to largest.</p></div></div>
+              </div>
+            </div>
+          </div>
+        `
+      },
+      {
+        title: "Data Wrangling III: Group & Summarize",
+        section: "R",
+        overview: "R",
+        className: "layout-workflow",
+        sectionColor: "var(--r-blue)",
+        render: () => `
+          <div class="slide-shell" style="--section-color: var(--r-blue);">
+            <header class="slide-header">
+              <div class="section-label">R</div>
+              <h1 class="slide-title">Data Wrangling III: Group &amp; Summarize</h1>
+              <p class="slide-subtitle">This is the densest wrangling pattern: split the data into groups, then collapse each group into a summary row.</p>
+            </header>
+            <div class="slide-body">
+              <div class="content-grid">
+                <div class="workflow-step">
+                  <div class="step-number">1</div>
+                  <h3>group_by()</h3>
+                  <p>Set up invisible groups based on a variable like Department.</p>
+                  <div class="pipeline-code">group_by(df, Department)</div>
+                </div>
+                <div class="workflow-step">
+                  <div class="step-number">2</div>
+                  <h3>summarize()</h3>
+                  <p>Collapse each group to one row with metrics like average and count.</p>
+                  <div class="pipeline-code">summarize(
+  Avg_Score = mean(Score),
+  Count = n()
+)</div>
+                </div>
+                <div class="workflow-step">
+                  <div class="step-number">3</div>
+                  <h3>Full pipeline</h3>
+                  <div class="pipeline-code">df %&gt;%
+  group_by(Department) %&gt;%
+  summarize(
+    Avg_Score = mean(Score),
+    Count = n()
+  )</div>
+                </div>
+                <div class="workflow-step">
+                  <div class="step-number">4</div>
+                  <h3>What changes</h3>
+                  <p>Before: many rows per department. After: one row per department with summary statistics.</p>
+                </div>
+              </div>
+              <div class="callout-row">
+                <div class="callout exam-tip"><div class="callout-icon">💡</div><div><h3>Exam Tip</h3><p><span class="inline-formula">group_by()</span> and <span class="inline-formula">summarize()</span> are usually paired. Grouping alone does not create the final summary table.</p></div></div>
+                <div class="callout mistake"><div class="callout-icon">⚠️</div><div><h3>Common Mistake</h3><p>If students skip <span class="inline-formula">group_by()</span>, they get one summary for the entire dataset instead of one summary per group.</p></div></div>
+              </div>
+            </div>
+          </div>
+        `
+      },
+      {
+        title: "Merging Datasets",
+        section: "R",
+        overview: "R",
+        className: "layout-compare",
+        sectionColor: "var(--r-blue)",
+        render: () => `
+          <div class="slide-shell" style="--section-color: var(--r-blue);">
+            <header class="slide-header">
+              <div class="section-label">R</div>
+              <h1 class="slide-title">Merging Datasets</h1>
+              <p class="slide-subtitle">Merging combines tables using a shared key. Conceptually, it is a lot like doing VLOOKUP for every row.</p>
+            </header>
+            <div class="slide-body">
+              <div class="content-grid">
+                <div class="card">
+                  <h3>Join logic</h3>
+                  <p>The shared column is the key. Matching keys determine which rows connect across tables.</p>
+                  <div class="join-visual" style="margin-top:0.9rem;">
+                    <div class="table-box card" style="padding:0.8rem;">
+                      <div class="table-caption">Customers</div>
+                      <table class="mini-table">
+                        <thead><tr><th>CustomerID</th><th>Name</th></tr></thead>
+                        <tbody><tr><td>C01</td><td>Alice</td></tr><tr><td>C02</td><td>Bob</td></tr><tr><td>C03</td><td>Carol</td></tr></tbody>
+                      </table>
+                    </div>
+                    <div class="join-arrow">&#8594;</div>
+                    <div class="table-box card" style="padding:0.8rem;">
+                      <div class="table-caption">Orders</div>
+                      <table class="mini-table">
+                        <thead><tr><th>CustomerID</th><th>Amount</th></tr></thead>
+                        <tbody><tr><td>C01</td><td>500</td></tr><tr><td>C01</td><td>300</td></tr><tr><td>C02</td><td>200</td></tr></tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+                <div class="card">
+                  <h3>Code patterns</h3>
+                  <pre class="code-block">merge(customers, orders, by = "CustomerID")
+
+# dplyr
+inner_join(customers, orders, by = "CustomerID")
+left_join(customers, orders, by = "CustomerID")
+right_join(customers, orders, by = "CustomerID")
+full_join(customers, orders, by = "CustomerID")</pre>
+                  <ul style="margin-top:0.8rem;">
+                    <li><strong>inner_join</strong>: keep only matches in both tables</li>
+                    <li><strong>left_join</strong>: keep all rows from the left table</li>
+                    <li><strong>right_join</strong>: keep all rows from the right table</li>
+                    <li><strong>full_join</strong>: keep everything from both tables</li>
+                  </ul>
+                </div>
+              </div>
+              <div class="callout-row">
+                <div class="callout exam-tip"><div class="callout-icon">💡</div><div><h3>Exam Tip</h3><p>The <span class="inline-formula">by</span> column must exist in both tables. If the names differ, you need to map them explicitly.</p></div></div>
+                <div class="callout mistake"><div class="callout-icon">⚠️</div><div><h3>Common Mistake</h3><p>Choosing the wrong key column. Always ask which variable is shared across both datasets.</p></div></div>
+              </div>
+            </div>
+          </div>
+        `
+      },
+      {
+        title: "Other Useful R Commands",
+        section: "R",
+        overview: "R",
+        className: "layout-concept",
+        sectionColor: "var(--r-blue)",
+        render: () => `
+          <div class="slide-shell" style="--section-color: var(--r-blue);">
+            <header class="slide-header">
+              <div class="section-label">R</div>
+              <h1 class="slide-title">Other Useful R Commands</h1>
+              <p class="slide-subtitle">Treat these as quick recognition items. Students do not need to memorize every detail, but they should know what each command is doing.</p>
+            </header>
+            <div class="slide-body">
+              <div class="grid-2">
+                <div class="card"><h3>head() / tail()</h3><pre class="code-block">head(df, 5)
+tail(df, 3)</pre><p>Preview the beginning or end of a dataset.</p></div>
+                <div class="card"><h3>str()</h3><pre class="code-block">str(df)</pre><p>Show structure: variable names, types, and sample values.</p></div>
+                <div class="card"><h3>summary()</h3><pre class="code-block">summary(df)</pre><p>Get quick descriptive statistics and category summaries.</p></div>
+                <div class="card"><h3>is.na() / na.rm</h3><pre class="code-block">is.na(df$Score)
+mean(df$Score, na.rm = TRUE)</pre><p>Detect missing values and remove them from calculations when needed.</p></div>
+              </div>
+              <div class="callout-row">
+                <div class="callout exam-tip"><div class="callout-icon">💡</div><div><h3>Exam Tip</h3><p><span class="inline-formula">str()</span> shows structure; <span class="inline-formula">summary()</span> shows statistics. That distinction is testable.</p></div></div>
+                <div class="callout mistake"><div class="callout-icon">⚠️</div><div><h3>Common Mistake</h3><p>In <span class="inline-formula">rename()</span>, the order is <span class="inline-formula">new_name = old_name</span>.</p></div></div>
+              </div>
+            </div>
+          </div>
+        `
+      },
+      {
+        title: "Part 2: Hands-On Practice",
+        section: null,
+        overview: "Activity",
+        className: "layout-activity",
+        render: () => `
+          <div class="slide-shell hero-shell">
+            <div class="badge-row">
+              <div class="badge">Transition to practice</div>
+            </div>
+            <div>
+              <h1 class="hero-title">Part 2: Hands-On Practice</h1>
+              <p class="hero-subtitle">You have reviewed the concepts. Now use them.</p>
+            </div>
+            <div class="card" style="max-width: 760px; margin: 0 auto; text-align: left;">
+              <h3>What students should do next</h3>
+              <ul>
+                <li>Open laptops and work through the mini-projects at their own pace.</li>
+                <li>Use the simulator slides again if any Excel function still feels fuzzy.</li>
+                <li>Predict the output before running code or formulas.</li>
+                <li>Focus first on the functions and commands that were hardest during Part 1.</li>
+              </ul>
+            </div>
+            <p class="hero-meta">Slow is smooth. Smooth is fast. Read each exam question carefully and trace the logic before committing to an answer.</p>
+          </div>
+        `
+      }
+    ];
+
+    function simulatorShell(instruction, id) {
+      return `
+        <div class="interactive-box" data-sim="${id}">
+          <p class="interactive-instruction">${instruction}</p>
+          <div class="sim-root"></div>
+        </div>
+      `;
+    }
+
+    const deck = document.getElementById("deck");
+    const overviewGrid = document.getElementById("overview-grid");
+
+    deck.innerHTML = slides.map((slide, index) => `
+      <section class="slide ${index === 0 ? "active" : ""} ${slide.className}" data-index="${index}" data-default-tab="${slide.defaultTab || ""}">
+        <div class="slide-stage">
+          ${slide.render()}
+        </div>
+      </section>
+    `).join("");
+
+    const overviewGroups = {
+      Intro: [],
+      Excel: [],
+      R: [],
+      Activity: []
+    };
+
+    slides.forEach((slide, index) => {
+      const bucket = overviewGroups[slide.overview] ? slide.overview : "Intro";
+      overviewGroups[bucket].push({ index, title: slide.title, section: slide.section || "Intro" });
+    });
+
+    overviewGrid.innerHTML = Object.entries(overviewGroups).map(([group, items]) => `
+      <div class="overview-group">
+        <h3>${group}</h3>
+        ${items.map(item => `
+          <button class="overview-item" data-jump="${item.index}">
+            <strong>${item.index + 1}. ${item.title}</strong>
+            <span>${item.section}</span>
+          </button>
+        `).join("")}
+      </div>
+    `).join("");
+
+    const progress = document.getElementById("progress");
+    const counter = document.getElementById("slide-counter");
+    const overview = document.getElementById("overview");
+    const slideEls = Array.from(document.querySelectorAll(".slide"));
+    let current = 0;
+
+    function showSlide(index) {
+      current = Math.max(0, Math.min(slides.length - 1, index));
+      slideEls.forEach((el, i) => {
+        el.classList.toggle("active", i === current);
+      });
+      const pct = ((current + 1) / slides.length) * 100;
+      progress.style.width = pct + "%";
+      counter.textContent = `${current + 1} / ${slides.length}`;
+      syncIndexMatchTabs();
+    }
+
+    function nextSlide() {
+      if (current < slides.length - 1) showSlide(current + 1);
+    }
+
+    function prevSlide() {
+      if (current > 0) showSlide(current - 1);
+    }
+
+    function toggleOverview(force) {
+      const open = typeof force === "boolean" ? force : !overview.classList.contains("open");
+      overview.classList.toggle("open", open);
+      overview.setAttribute("aria-hidden", String(!open));
+    }
+
+    document.getElementById("close-overview").addEventListener("click", () => toggleOverview(false));
+
+    overviewGrid.addEventListener("click", (event) => {
+      const btn = event.target.closest("[data-jump]");
+      if (!btn) return;
+      showSlide(Number(btn.dataset.jump));
+      toggleOverview(false);
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "ArrowRight") {
+        if (overview.classList.contains("open")) return;
+        event.preventDefault();
+        nextSlide();
+      } else if (event.key === "ArrowLeft") {
+        if (overview.classList.contains("open")) return;
+        event.preventDefault();
+        prevSlide();
+      } else if (event.key === "Escape") {
+        event.preventDefault();
+        toggleOverview();
+      }
+    });
+
+    function fitSlide(slideEl) {
+      const stage = slideEl.querySelector(".slide-stage");
+      const shell = slideEl.querySelector(".slide-shell");
+      if (!stage || !shell) return;
+      shell.style.transform = "scale(1)";
+      const availableWidth = stage.clientWidth;
+      const availableHeight = stage.clientHeight;
+      const neededWidth = shell.scrollWidth;
+      const neededHeight = shell.scrollHeight;
+      const scale = Math.min(1, availableWidth / neededWidth, availableHeight / neededHeight);
+      shell.style.transform = `scale(${scale})`;
+    }
+
+    function fitAllSlides() {
+      slideEls.forEach((slide) => fitSlide(slide));
+    }
+
+    function scheduleFit() {
+      requestAnimationFrame(() => requestAnimationFrame(fitAllSlides));
+    }
+
+    function compareValues(a, operator, b) {
+      switch (operator) {
+        case ">": return a > b;
+        case ">=": return a >= b;
+        case "<": return a < b;
+        case "<=": return a <= b;
+        case "=": return a === b;
+        case "<>": return a !== b;
+        default: return false;
+      }
+    }
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;");
+    }
+
+    function visibleSpaces(str) {
+      return str.split("").map((ch) => ch === " " ? "·" : escapeHtml(ch)).join("");
+    }
+
+    function trimExcelStyle(str) {
+      return str.trim().replace(/\s+/g, " ");
+    }
+
+    function substituteAll(text, oldText, newText) {
+      if (!oldText) return text;
+      return text.split(oldText).join(newText);
+    }
+
+    function buildCharMap(str, activeIndexes = []) {
+      return `<div class="char-map">${str.split("").map((ch, index) => `
+        <div class="char-cell ${activeIndexes.includes(index) ? "active" : ""}">
+          ${escapeHtml(ch === " " ? "␠" : ch)}
+          <span class="char-index">${index + 1}</span>
+        </div>
+      `).join("")}</div>`;
+    }
+
+    function makeIfSimulator(root) {
+      root.innerHTML = `
+        <div class="sim-grid">
+          <div class="sim-controls">
+            <div class="control"><label for="if-value">Value</label><input id="if-value" type="number" value="75"></div>
+            <div class="control"><label for="if-op">Condition</label><select id="if-op"><option>&gt;</option><option selected>&gt;=</option><option>&lt;</option><option>&lt;=</option><option>=</option><option>&lt;&gt;</option></select></div>
+            <div class="control"><label for="if-threshold">Threshold</label><input id="if-threshold" type="number" value="60"></div>
+            <div class="control"><label for="if-true">If TRUE</label><input id="if-true" value="Pass"></div>
+            <div class="control"><label for="if-false">If FALSE</label><input id="if-false" value="Fail"></div>
+          </div>
+          <div class="formula-banner" id="if-formula"></div>
+          <div class="result-box" id="if-result"></div>
+          <div class="sim-explain" id="if-explain"></div>
+        </div>
+      `;
+      const valueEl = root.querySelector("#if-value");
+      const opEl = root.querySelector("#if-op");
+      const thresholdEl = root.querySelector("#if-threshold");
+      const trueEl = root.querySelector("#if-true");
+      const falseEl = root.querySelector("#if-false");
+      const formulaEl = root.querySelector("#if-formula");
+      const resultEl = root.querySelector("#if-result");
+      const explainEl = root.querySelector("#if-explain");
+
+      function update() {
+        const value = Number(valueEl.value);
+        const threshold = Number(thresholdEl.value);
+        const passed = compareValues(value, opEl.value, threshold);
+        const result = passed ? trueEl.value : falseEl.value;
+        formulaEl.textContent = `=IF(${value} ${opEl.value} ${threshold}, "${trueEl.value}", "${falseEl.value}")`;
+        resultEl.classList.remove("error");
+        resultEl.textContent = `"${result}" ${passed ? "✓" : "✗"}`;
+        explainEl.textContent = `The condition ${value} ${opEl.value} ${threshold} evaluates to ${passed ? "TRUE" : "FALSE"}.`;
+      }
+
+      [valueEl, opEl, thresholdEl, trueEl, falseEl].forEach((el) => el.addEventListener("input", update));
+      update();
+    }
+
+    const regionStatusRows = [
+      { region: "West", status: "Active", sales: 500 },
+      { region: "East", status: "Active", sales: 300 },
+      { region: "West", status: "Closed", sales: 200 },
+      { region: "West", status: "Active", sales: 450 },
+      { region: "East", status: "Closed", sales: 100 }
+    ];
+
+    function buildCriteriaTable(matches, emphasizeSales) {
+      return `
+        <table class="data-table">
+          <thead><tr><th>Region</th><th>Status</th><th>Sales</th></tr></thead>
+          <tbody>
+            ${regionStatusRows.map((row, index) => `
+              <tr class="${matches.includes(index) ? "row-match" : "row-dim"}">
+                <td>${row.region}</td>
+                <td>${row.status}</td>
+                <td class="${emphasizeSales && matches.includes(index) ? "cell-return" : ""}">${row.sales}</td>
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+      `;
+    }
+
+    function makeCountifsSimulator(root, mode) {
+      root.innerHTML = `
+        <div class="sim-grid">
+          <div id="${mode}-table"></div>
+          <div class="sim-controls">
+            <div class="control"><label for="${mode}-region">Criteria 1: Region</label><select id="${mode}-region"><option>West</option><option>East</option></select></div>
+            <div class="control"><label for="${mode}-status">Criteria 2: Status</label><select id="${mode}-status"><option>Active</option><option>Closed</option></select></div>
+          </div>
+          <div class="formula-banner" id="${mode}-formula"></div>
+          <div class="result-box" id="${mode}-result"></div>
+          <div class="sim-explain" id="${mode}-explain"></div>
+        </div>
+      `;
+      const regionEl = root.querySelector(`#${mode}-region`);
+      const statusEl = root.querySelector(`#${mode}-status`);
+      const tableEl = root.querySelector(`#${mode}-table`);
+      const formulaEl = root.querySelector(`#${mode}-formula`);
+      const resultEl = root.querySelector(`#${mode}-result`);
+      const explainEl = root.querySelector(`#${mode}-explain`);
+
+      function update() {
+        const matches = regionStatusRows
+          .map((row, index) => row.region === regionEl.value && row.status === statusEl.value ? index : -1)
+          .filter((index) => index >= 0);
+        tableEl.innerHTML = buildCriteriaTable(matches, mode === "sumifs");
+        if (mode === "countifs") {
+          formulaEl.textContent = `=COUNTIFS(Region, "${regionEl.value}", Status, "${statusEl.value}")`;
+          resultEl.textContent = String(matches.length);
+          explainEl.textContent = `${matches.length} row${matches.length === 1 ? "" : "s"} match both criteria.`;
+        } else {
+          const total = matches.reduce((sum, index) => sum + regionStatusRows[index].sales, 0);
+          formulaEl.textContent = `=SUMIFS(Sales, Region, "${regionEl.value}", Status, "${statusEl.value}")`;
+          resultEl.textContent = String(total);
+          explainEl.textContent = `${matches.length} matching row${matches.length === 1 ? "" : "s"} contribute to the total sales of ${total}.`;
+        }
+      }
+
+      [regionEl, statusEl].forEach((el) => el.addEventListener("input", update));
+      update();
+    }
+
+    const employees = [
+      ["E001", "Alice Wong", "Sales"],
+      ["E002", "Bob Chen", "Ops"],
+      ["E003", "Carol Li", "HR"],
+      ["E004", "Dave Kim", "Sales"]
+    ];
+
+    function makeVlookupSimulator(root) {
+      root.innerHTML = `
+        <div class="sim-grid">
+          <div id="vlookup-table"></div>
+          <div class="sim-controls">
+            <div class="control"><label for="lookup-value">Lookup value</label><input id="lookup-value" value="E002"></div>
+            <div class="control"><label for="lookup-col">Col index</label><select id="lookup-col"><option value="1">1</option><option value="2">2</option><option value="3" selected>3</option></select></div>
+          </div>
+          <div class="formula-banner" id="vlookup-formula"></div>
+          <div class="result-box" id="vlookup-result"></div>
+          <div class="sim-explain" id="vlookup-explain"></div>
+        </div>
+      `;
+      const lookupEl = root.querySelector("#lookup-value");
+      const colEl = root.querySelector("#lookup-col");
+      const tableEl = root.querySelector("#vlookup-table");
+      const formulaEl = root.querySelector("#vlookup-formula");
+      const resultEl = root.querySelector("#vlookup-result");
+      const explainEl = root.querySelector("#vlookup-explain");
+
+      function update() {
+        const lookup = lookupEl.value.trim();
+        const colIndex = Number(colEl.value) - 1;
+        const rowIndex = employees.findIndex((row) => row[0] === lookup);
+        formulaEl.textContent = `=VLOOKUP("${lookup}", table, ${colEl.value}, FALSE)`;
+
+        tableEl.innerHTML = `
+          <table class="data-table">
+            <thead><tr><th>Emp ID</th><th>Name</th><th>Dept</th></tr></thead>
+            <tbody>
+              ${employees.map((row, index) => `
+                <tr class="${rowIndex === index ? "row-match" : (rowIndex >= 0 ? "row-dim" : "")}">
+                  ${row.map((cell, cellIndex) => `<td class="${rowIndex === index && cellIndex === colIndex ? "cell-return" : ""}">${cell}</td>`).join("")}
+                </tr>
+              `).join("")}
+            </tbody>
+          </table>
+        `;
+
+        if (rowIndex === -1) {
+          resultEl.classList.add("error");
+          resultEl.textContent = "Not Found";
+          explainEl.textContent = `Step 1: search column 1 for "${lookup}" → no exact match found.`;
+          return;
+        }
+
+        const result = employees[rowIndex][colIndex];
+        resultEl.classList.remove("error");
+        resultEl.textContent = String(result);
+        explainEl.textContent = `Step 1: search column 1 for "${lookup}" → row ${rowIndex + 1}. Step 2: return column ${colIndex + 1} of that row → "${result}".`;
+      }
+
+      [lookupEl, colEl].forEach((el) => el.addEventListener("input", update));
+      update();
+    }
+
+    const matchArray = ["Sales", "Ops", "HR", "Finance"];
+    const indexArray = [500, 300, 200, 150];
+
+    function renderIndexMatch(root, tab) {
+      const state = root._indexState || { lookup: "Ops", row: 2, tab: tab || "combo" };
+      root._indexState = state;
+
+      root.innerHTML = `
+        <div class="tab-row">
+          <button class="tab ${state.tab === "match" ? "active" : ""}" data-tab="match">MATCH only</button>
+          <button class="tab ${state.tab === "index" ? "active" : ""}" data-tab="index">INDEX only</button>
+          <button class="tab ${state.tab === "combo" ? "active" : ""}" data-tab="combo">INDEX + MATCH</button>
+        </div>
+        <div class="sim-root-panel" id="index-match-panel"></div>
+      `;
+
+      root.querySelectorAll("[data-tab]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          state.tab = btn.dataset.tab;
+          renderIndexMatch(root, state.tab);
+        });
+      });
+
+      const panel = root.querySelector("#index-match-panel");
+      if (state.tab === "match") {
+        const active = matchArray.indexOf(state.lookup);
+        panel.innerHTML = `
+          <div class="sim-grid">
+            <div class="control" style="max-width:220px;"><label for="match-lookup">Lookup value</label><input id="match-lookup" value="${state.lookup}"></div>
+            <div class="formula-banner">=MATCH("${state.lookup}", array, 0)</div>
+            <div class="array-strip">${matchArray.map((item, index) => `
+              <div class="array-cell ${index === active ? "active" : ""}">${item}<span class="array-pos">pos ${index + 1}</span></div>
+            `).join("")}</div>
+            <div class="result-box ${active === -1 ? "error" : ""}">${active === -1 ? "Not Found" : active + 1}</div>
+            <div class="sim-explain">${active === -1 ? `No exact match for "${state.lookup}".` : `"${state.lookup}" is at position ${active + 1} in the array.`}</div>
+          </div>
+        `;
+        panel.querySelector("#match-lookup").addEventListener("input", (event) => {
+          state.lookup = event.target.value;
+          renderIndexMatch(root, "match");
+        });
+      } else if (state.tab === "index") {
+        const selected = Math.max(1, Math.min(indexArray.length, Number(state.row) || 1));
+        state.row = selected;
+        panel.innerHTML = `
+          <div class="sim-grid">
+            <div class="control" style="max-width:220px;"><label for="index-row">Row number</label><input id="index-row" type="number" min="1" max="4" value="${selected}"></div>
+            <div class="formula-banner">=INDEX(array, ${selected})</div>
+            <div class="array-strip">${indexArray.map((item, index) => `
+              <div class="array-cell ${index === selected - 1 ? "active" : ""}">${item}<span class="array-pos">[${index + 1}]</span></div>
+            `).join("")}</div>
+            <div class="result-box">${indexArray[selected - 1]}</div>
+            <div class="sim-explain">INDEX returns the value at position ${selected}, which is ${indexArray[selected - 1]}.</div>
+          </div>
+        `;
+        panel.querySelector("#index-row").addEventListener("input", (event) => {
+          state.row = event.target.value;
+          renderIndexMatch(root, "index");
+        });
+      } else {
+        const active = matchArray.indexOf(state.lookup);
+        const result = active >= 0 ? indexArray[active] : null;
+        panel.innerHTML = `
+          <div class="sim-grid">
+            <div class="control" style="max-width:220px;"><label for="combo-lookup">Lookup</label><input id="combo-lookup" value="${state.lookup}"></div>
+            <div id="combo-table">
+              <table class="data-table">
+                <thead><tr><th>Department</th><th>Budget</th></tr></thead>
+                <tbody>
+                  ${matchArray.map((item, index) => `
+                    <tr class="${index === active ? "row-match" : (active >= 0 ? "row-dim" : "")}">
+                      <td>${item}</td>
+                      <td class="${index === active ? "cell-return" : ""}">${indexArray[index]}</td>
+                    </tr>
+                  `).join("")}
+                </tbody>
+              </table>
+            </div>
+            <div class="formula-banner">=INDEX(Budget, MATCH("${state.lookup}", Department, 0))</div>
+            <div class="result-box ${active === -1 ? "error" : ""}">${active === -1 ? "Not Found" : result}</div>
+            <div class="sim-explain">${active === -1 ? `MATCH cannot find "${state.lookup}", so INDEX has no valid position to use.` : `Step 1: MATCH finds "${state.lookup}" at position ${active + 1}. Step 2: INDEX returns Budget[${active + 1}] → ${result}.`}</div>
+          </div>
+        `;
+        panel.querySelector("#combo-lookup").addEventListener("input", (event) => {
+          state.lookup = event.target.value;
+          renderIndexMatch(root, "combo");
+        });
+      }
+      scheduleFit();
+    }
+
+    function makeTextFunctionSimulator(root) {
+      const state = { text: "PROD-2024-XL", mode: "LEFT", chars: 4, start: 6 };
+      function render() {
+        let active = [];
+        let result = "";
+        if (state.mode === "LEFT") {
+          active = Array.from({ length: Math.max(0, Number(state.chars) || 0) }, (_, index) => index).filter((index) => index < state.text.length);
+          result = state.text.slice(0, Number(state.chars) || 0);
+        } else if (state.mode === "RIGHT") {
+          const count = Math.max(0, Number(state.chars) || 0);
+          active = Array.from({ length: count }, (_, index) => state.text.length - count + index).filter((index) => index >= 0 && index < state.text.length);
+          result = state.text.slice(state.text.length - count);
+        } else {
+          const start = Math.max(1, Number(state.start) || 1);
+          const count = Math.max(0, Number(state.chars) || 0);
+          active = Array.from({ length: count }, (_, index) => start - 1 + index).filter((index) => index < state.text.length);
+          result = state.text.slice(start - 1, start - 1 + count);
+        }
+        root.innerHTML = `
+          <div class="sim-grid">
+            <div class="control"><label for="text-input">Input string</label><input id="text-input" value="${escapeHtml(state.text)}"></div>
+            ${buildCharMap(state.text, active)}
+            <div class="tab-row">
+              ${["LEFT", "RIGHT", "MID"].map((mode) => `<button class="tab ${state.mode === mode ? "active" : ""}" data-mode="${mode}">${mode}</button>`).join("")}
+            </div>
+            <div class="sim-controls">
+              ${state.mode === "MID" ? `
+                <div class="control"><label for="mid-start">Start</label><input id="mid-start" type="number" min="1" value="${state.start}"></div>
+                <div class="control"><label for="mid-count">Num chars</label><input id="mid-count" type="number" min="0" value="${state.chars}"></div>
+              ` : `
+                <div class="control"><label for="char-count">Num chars</label><input id="char-count" type="number" min="0" value="${state.chars}"></div>
+              `}
+            </div>
+            <div class="formula-banner">${state.mode === "LEFT" ? `=LEFT("${state.text}", ${state.chars})` : state.mode === "RIGHT" ? `=RIGHT("${state.text}", ${state.chars})` : `=MID("${state.text}", ${state.start}, ${state.chars})`}</div>
+            <div class="result-box">"${result}"</div>
+          </div>
+        `;
+        root.querySelector("#text-input").addEventListener("input", (event) => {
+          state.text = event.target.value;
+          render();
+        });
+        root.querySelectorAll("[data-mode]").forEach((btn) => btn.addEventListener("click", () => {
+          state.mode = btn.dataset.mode;
+          render();
+        }));
+        const charCount = root.querySelector("#char-count");
+        if (charCount) charCount.addEventListener("input", (event) => { state.chars = event.target.value; render(); });
+        const midStart = root.querySelector("#mid-start");
+        const midCount = root.querySelector("#mid-count");
+        if (midStart) midStart.addEventListener("input", (event) => { state.start = event.target.value; render(); });
+        if (midCount) midCount.addEventListener("input", (event) => { state.chars = event.target.value; render(); });
+        scheduleFit();
+      }
+      render();
+    }
+
+    function makeConcatSimulator(root) {
+      const state = { parts: ["Hello", " ", "World"] };
+      const colors = ["#f7d28c", "#b6d8f2", "#c9e7ce", "#f5c0c0", "#ded3f6"];
+
+      function render() {
+        root.innerHTML = `
+          <div class="sim-grid">
+            <div class="sim-controls">
+              ${state.parts.map((part, index) => `
+                <div class="control">
+                  <label for="concat-${index}">Part ${index + 1}</label>
+                  <input class="concat-part" id="concat-${index}" data-part="${index}" value="${escapeHtml(part)}">
+                </div>
+              `).join("")}
+            </div>
+            <div><button class="tab" id="add-part" ${state.parts.length >= 5 ? "disabled" : ""}>+ Add part</button></div>
+            <div class="formula-banner">=CONCATENATE(${state.parts.map((part) => `"${part.replaceAll('"', '\\"')}"`).join(", ")})</div>
+            <div class="segment-output">
+              ${state.parts.map((part, index) => `<div class="segment" style="background:${colors[index % colors.length]}">${escapeHtml(part || "∅")}</div>`).join("")}
+            </div>
+            <div class="result-box">${escapeHtml(state.parts.join(""))}</div>
+          </div>
+        `;
+        root.querySelectorAll("[data-part]").forEach((input) => input.addEventListener("input", (event) => {
+          state.parts[Number(event.target.dataset.part)] = event.target.value;
+          render();
+        }));
+        root.querySelector("#add-part").addEventListener("click", () => {
+          if (state.parts.length < 5) {
+            state.parts.push("");
+            render();
+          }
+        });
+        scheduleFit();
+      }
+      render();
+    }
+
+    function makeLenTrimSimulator(root) {
+      const state = { text: "   Hello   World   " };
+
+      function render() {
+        const before = state.text;
+        const after = trimExcelStyle(before);
+        const beforeLen = before.length;
+        const afterLen = after.length;
+        const removed = beforeLen - afterLen;
+        root.innerHTML = `
+          <div class="sim-grid">
+            <div class="control"><label for="trim-input">Input</label><input id="trim-input" value="${escapeHtml(state.text)}"></div>
+            <div class="compare-panels">
+              <div class="compare-panel">
+                <div class="mini-label">Before TRIM</div>
+                <div class="spaces-view">${visibleSpaces(before)}</div>
+                <p style="margin-top:0.7rem;"><span class="inline-formula">LEN = ${beforeLen}</span></p>
+              </div>
+              <div class="compare-panel">
+                <div class="mini-label">After TRIM</div>
+                <div class="spaces-view">${visibleSpaces(after)}</div>
+                <p style="margin-top:0.7rem;"><span class="inline-formula">LEN = ${afterLen}</span></p>
+              </div>
+            </div>
+            <div class="sim-explain">TRIM removed <strong>${removed}</strong> extra space character${removed === 1 ? "" : "s"}.</div>
+          </div>
+        `;
+        root.querySelector("#trim-input").addEventListener("input", (event) => {
+          state.text = event.target.value;
+          render();
+        });
+        scheduleFit();
+      }
+      render();
+    }
+
+    function makeSubstituteReplaceSimulator(root) {
+      const state = { text: "2024-01-15", oldText: "-", newText: "/", start: 5, count: 1 };
+
+      function render() {
+        const substituteResult = substituteAll(state.text, state.oldText, state.newText);
+        const start = Math.max(1, Number(state.start) || 1);
+        const count = Math.max(0, Number(state.count) || 0);
+        const replaceResult = state.text.slice(0, start - 1) + state.newText + state.text.slice(start - 1 + count);
+        const subMarked = state.oldText ? escapeHtml(state.text).replaceAll(escapeHtml(state.oldText), `<mark>${escapeHtml(state.oldText)}</mark>`) : escapeHtml(state.text);
+        const replaceMarked = state.text.split("").map((ch, index) => {
+          const active = index >= start - 1 && index < start - 1 + count;
+          return active ? `<mark>${escapeHtml(ch)}</mark>` : escapeHtml(ch);
+        }).join("");
+
+        root.innerHTML = `
+          <div class="sim-grid">
+            <div class="sim-controls">
+              <div class="control"><label for="shared-text">Text</label><input id="shared-text" value="${escapeHtml(state.text)}"></div>
+              <div class="control"><label for="sub-old">Old</label><input id="sub-old" value="${escapeHtml(state.oldText)}"></div>
+              <div class="control"><label for="shared-new">New</label><input id="shared-new" value="${escapeHtml(state.newText)}"></div>
+              <div class="control"><label for="replace-start">Start</label><input id="replace-start" type="number" min="1" value="${state.start}"></div>
+              <div class="control"><label for="replace-count">Num</label><input id="replace-count" type="number" min="0" value="${state.count}"></div>
+            </div>
+            <div class="compare-panels">
+              <div class="compare-panel">
+                <h3>SUBSTITUTE</h3>
+                <p>Replaces by content.</p>
+                <div class="spaces-view">${subMarked}</div>
+                <div class="formula-banner" style="margin-top:0.8rem;">=SUBSTITUTE("${state.text}", "${state.oldText}", "${state.newText}")</div>
+                <div class="result-box" style="margin-top:0.8rem;">${escapeHtml(substituteResult)}</div>
+              </div>
+              <div class="compare-panel">
+                <h3>REPLACE</h3>
+                <p>Replaces by position.</p>
+                <div class="spaces-view">${replaceMarked}</div>
+                <div class="formula-banner" style="margin-top:0.8rem;">=REPLACE("${state.text}", ${start}, ${count}, "${state.newText}")</div>
+                <div class="result-box" style="margin-top:0.8rem;">${escapeHtml(replaceResult)}</div>
+              </div>
+            </div>
+            <div class="difference-banner">Key difference: SUBSTITUTE finds matching content and replaces every match. REPLACE targets a specific position range.</div>
+          </div>
+        `;
+
+        [["#shared-text", "text"], ["#sub-old", "oldText"], ["#shared-new", "newText"], ["#replace-start", "start"], ["#replace-count", "count"]].forEach(([selector, key]) => {
+          root.querySelector(selector).addEventListener("input", (event) => {
+            state[key] = event.target.value;
+            render();
+          });
+        });
+        scheduleFit();
+      }
+      render();
+    }
+
+    function makeFindSearchSimulator(root) {
+      const state = { text: "Hello World", needle: "world" };
+
+      function render() {
+        const haystack = state.text;
+        const needle = state.needle;
+        const findIndex = haystack.indexOf(needle);
+        const searchIndex = haystack.toLowerCase().indexOf(needle.toLowerCase());
+        const active = searchIndex >= 0 ? Array.from({ length: needle.length }, (_, index) => searchIndex + index) : [];
+        root.innerHTML = `
+          <div class="sim-grid">
+            <div class="sim-controls">
+              <div class="control"><label for="find-text">Text</label><input id="find-text" value="${escapeHtml(state.text)}"></div>
+              <div class="control"><label for="find-needle">Find me</label><input id="find-needle" value="${escapeHtml(state.needle)}"></div>
+            </div>
+            <div class="compare-panels">
+              <div class="compare-panel">
+                <h3>FIND</h3>
+                <p>Case-sensitive</p>
+                <div class="result-box ${findIndex === -1 ? "error" : ""}" style="margin-top:0.8rem;">${findIndex === -1 ? "ERROR" : findIndex + 1}</div>
+                <p style="margin-top:0.75rem;">${findIndex === -1 ? `"${needle}" does not exactly match the case in "${haystack}".` : `Match starts at position ${findIndex + 1}.`}</p>
+              </div>
+              <div class="compare-panel">
+                <h3>SEARCH</h3>
+                <p>Case-insensitive</p>
+                <div class="result-box ${searchIndex === -1 ? "error" : ""}" style="margin-top:0.8rem;">${searchIndex === -1 ? "ERROR" : searchIndex + 1}</div>
+                <p style="margin-top:0.75rem;">${searchIndex === -1 ? `No match found for "${needle}".` : `SEARCH matches "${haystack.slice(searchIndex, searchIndex + needle.length)}" starting at position ${searchIndex + 1}.`}</p>
+              </div>
+            </div>
+            ${buildCharMap(haystack, active)}
+          </div>
+        `;
+        root.querySelector("#find-text").addEventListener("input", (event) => {
+          state.text = event.target.value;
+          render();
+        });
+        root.querySelector("#find-needle").addEventListener("input", (event) => {
+          state.needle = event.target.value;
+          render();
+        });
+        scheduleFit();
+      }
+      render();
+    }
+
+    function initSimulators() {
+      const map = {
+        "if-simulator": makeIfSimulator,
+        "countifs-simulator": (root) => makeCountifsSimulator(root, "countifs"),
+        "sumifs-simulator": (root) => makeCountifsSimulator(root, "sumifs"),
+        "vlookup-simulator": makeVlookupSimulator,
+        "index-match-simulator": (root) => renderIndexMatch(root, "combo"),
+        "text-function-simulator": makeTextFunctionSimulator,
+        "concat-simulator": makeConcatSimulator,
+        "len-trim-simulator": makeLenTrimSimulator,
+        "substitute-replace-simulator": makeSubstituteReplaceSimulator,
+        "find-search-simulator": makeFindSearchSimulator
+      };
+
+      document.querySelectorAll("[data-sim]").forEach((box) => {
+        const id = box.dataset.sim;
+        const root = box.querySelector(".sim-root");
+        map[id](root);
+      });
+    }
+
+    function syncIndexMatchTabs() {
+      const slide = slideEls[current];
+      const defaultTab = slide.dataset.defaultTab;
+      if (!defaultTab) return;
+      slide.querySelectorAll('[data-sim="index-match-simulator"] .sim-root').forEach((root) => {
+        root._indexState = root._indexState || { lookup: "Ops", row: 2, tab: defaultTab };
+        root._indexState.tab = defaultTab;
+        renderIndexMatch(root, defaultTab);
+      });
+    }
+
+    initSimulators();
+    window.addEventListener("resize", scheduleFit);
+    showSlide(0);
+    scheduleFit();
+  </script>
+</body>
+
+</html>
