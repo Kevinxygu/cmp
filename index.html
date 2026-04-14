@@ -467,6 +467,72 @@
       font-size: 0.95rem;
     }
 
+    /* ── Loading / meme slideshow ─────────────────────────────────── */
+    .loading-screen {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      gap: 1.8rem;
+      text-align: center;
+    }
+
+    .meme-stage {
+      position: relative;
+      width: 320px;
+      height: 260px;
+      flex-shrink: 0;
+      overflow: hidden;
+    }
+
+    .meme-img {
+      max-height: 260px;
+      max-width: 320px;
+      width: auto;
+      height: auto;
+      border-radius: var(--radius-sm);
+      box-shadow: var(--shadow);
+      object-fit: contain;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      will-change: transform, opacity;
+      transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease;
+    }
+
+    .meme-img.meme-waiting {
+      transform: translate(calc(-50% + 115%), -50%);
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .meme-img.meme-entering {
+      transform: translate(-50%, -50%);
+      opacity: 1;
+    }
+
+    .meme-img.meme-visible {
+      transform: translate(-50%, -50%);
+      opacity: 1;
+    }
+
+    .meme-img.meme-exiting {
+      transform: translate(calc(-50% - 115%), -50%);
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .loading-hint {
+      color: var(--light-text);
+      font-size: 0.85rem;
+    }
+
+    /* ────────────────────────────────────────────────────────────── */
+
     .profile-card {
       display: grid;
       place-items: center;
@@ -1056,16 +1122,15 @@
         overview: "Intro",
         className: "layout-hero",
         render: () => `
-          <div class="slide-shell hero-shell">
-            <div class="badge-row">
-              <div class="badge">Final Exam</div>
-            </div>
+          <div class="loading-screen">
+            <div class="badge-row"><div class="badge">Final Exam</div></div>
             <div>
               <h1 class="hero-title">COMM 205 Exam B Review</h1>
               <p class="hero-subtitle">Excel + R — Functions, Wrangling, and Exam Patterns</p>
             </div>
+            <div class="meme-stage" id="meme-stage"></div>
             <p class="hero-meta">We'll be starting soon! Please take some time for yourself.</p>
-            <p class="hero-note">Open the slide overview with <span class="inline-formula">Esc</span>.</p>
+            <p class="loading-hint">Press → to begin &nbsp;·&nbsp; Esc for overview</p>
           </div>
         `
       },
@@ -1077,9 +1142,9 @@
         render: () => `
           <div class="slide-shell hero-shell">
             <div>
-              <h1 class="hero-title">Land Acknowledgement</h1>
+              <h1 class="hero-title" style="font-size: clamp(2rem, 4vw, 3.2rem); margin-bottom: 1.5rem;">Land Acknowledgement</h1>
               <p class="hero-subtitle">We would like to acknowledge that this COMM 205 final review session takes place on the unceded territory of the xʷməθkʷəy̓əm (Musqueam) and səlilwətaɬ (Tsleil-Waututh) Nations.</p>
-              <p class="hero-meta">As someone with the CMP, we are grateful to operate on the University of British Columbia’s Point Grey Campus, and we encourage all attendees to take some time to understand the history of this land and move towards reconciliation.</p>
+              <p class="hero-meta">As someone teaching under the CMP, we are grateful to operate on the University of British Columbia’s Point Grey Campus, and we encourage all attendees to take some time to understand the history of this land and move towards reconciliation.</p>
             </div>
           </div>
         `
@@ -1093,24 +1158,25 @@
           <div class="slide-shell">
             <header class="slide-header">
               <h1 class="slide-title">Who am I?</h1>
-              <p class="slide-subtitle">A short intro so students know who is teaching and why the session is structured this way.</p>
+              <p class="slide-subtitle">Hi, I'm Kevin, a 5th year Business + CS student!</p>
             </header>
             <div class="slide-body">
               <div class="content-grid">
                 <div class="card">
                   <h3>Suggested talking points</h3>
                   <ul>
-                    <li>Presenter name and a short bio.</li>
-                    <li>Why you care about teaching this material.</li>
-                    <li>Relevant course, tutoring, TA, or industry experience.</li>
-                    <li>One sentence that signals you understand where students usually get stuck.</li>
+                    <li>Used to TA COMM 190, and I was a Career Peer Advisor for the BCC this year</li>
+                    <li>I love teaching through hackathons. Hosted workshops on software development, vibe coding, and pitching!</li>
+                    <li>I'm part of UBCMA, nwPlus, Sauder Summit, and so many other clubs on campus!</li>
+                    <li>Competed at hackathons at Stanford, Harvard, and UC Berkeley this year!</li>
+                    <li>I collect hockey pucks :)</li>
                   </ul>
                 </div>
                 <div class="card profile-card">
                   <div>
-                    <div class="avatar">KG</div>
-                    <h3>Presenter Placeholder</h3>
-                    <p>Swap this card with your own photo, initials, or a brief bio before presenting.</p>
+                    <img src="images/avatar.jpeg" alt="Kevin Gu" style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; display: block; margin: 0 auto 1rem auto;">
+                    <h3>Kevin Gu</h3>
+                    <p>5th Year Business + CS Student</p>
                   </div>
                 </div>
               </div>
@@ -1134,10 +1200,10 @@
                 <div class="card">
                   <h3>Session structure</h3>
                   <ul>
-                    <li><strong>Access these slides:</strong> <span class="inline-formula">bit.ly/[shortlink]</span></li>
+                    <li><strong>Access these slides:</strong> <span class="inline-formula">bit.ly/cmp205</span></li>
                     <li><strong>Part 1:</strong> lecture-style review of every Excel function and R concept in Exam B.</li>
                     <li><strong>Part 2:</strong> hands-on mini-projects in Excel and R.</li>
-                    <li>The interactive demos let students experiment live during and after the walkthrough.</li>
+                    <li>The interactive demos let you learn by BUILDING! Which is how you learn tech :)</li>
                   </ul>
                 </div>
                 <div class="card">
@@ -2767,6 +2833,98 @@ mean(df$Score, na.rm = TRUE)</pre><p>Detect missing values and remove them from 
 
     initSimulators();
     window.addEventListener("resize", scheduleFit);
+
+    // ── Meme slideshow ────────────────────────────────────────────────
+    // Add your meme image paths here. The slideshow cycles through them
+    // automatically. Drop files in the images/ folder and list them below.
+    const MEME_IMAGES = [
+      "images/image1.png",
+      "images/image2.png",
+      "images/image3.png",
+      "images/image4.png",
+      "images/image5.png",
+      "images/image6.png",
+      "images/image7.png",
+      "images/image8.png",
+      "images/image9.png",
+      "images/image10.png",
+    ];
+    const MEME_DISPLAY_MS = 2000; // how long each image is shown (ms)
+    const MEME_TRANSITION_MS = 250; // must match CSS transition duration (ms)
+
+    let memeInterval = null;
+    let memeIndex = 0;
+    let memeImgEls = [];
+    let memeReady = false;
+
+    function buildMemeSlideshow() {
+      const stage = document.getElementById("meme-stage");
+      if (!stage || memeReady) return;
+      memeReady = true;
+      memeImgEls = MEME_IMAGES.map((src, i) => {
+        const img = document.createElement("img");
+        img.src = src;
+        img.alt = "Meme " + (i + 1);
+        img.className = "meme-img meme-waiting";
+        stage.appendChild(img);
+        return img;
+      });
+      // Show first image immediately
+      if (memeImgEls.length > 0) {
+        memeImgEls[0].className = "meme-img meme-entering";
+        setTimeout(() => {
+          if (memeImgEls[0]) memeImgEls[0].className = "meme-img meme-visible";
+        }, MEME_TRANSITION_MS);
+      }
+    }
+
+    function advanceMeme() {
+      const total = memeImgEls.length;
+      if (total === 0) return;
+      const outIdx = memeIndex;
+      memeIndex = (memeIndex + 1) % total;
+      const inIdx = memeIndex;
+
+      // Exit current
+      memeImgEls[outIdx].className = "meme-img meme-exiting";
+
+      // Stage next just off-screen right, then slide in
+      memeImgEls[inIdx].className = "meme-img meme-waiting";
+      // Force reflow so the waiting state is painted before we start the transition
+      void memeImgEls[inIdx].offsetWidth;
+      memeImgEls[inIdx].className = "meme-img meme-entering";
+
+      setTimeout(() => {
+        memeImgEls[inIdx].className = "meme-img meme-visible";
+        memeImgEls[outIdx].className = "meme-img meme-waiting"; // reset to off-screen right
+      }, MEME_TRANSITION_MS);
+    }
+
+    function startMemeSlideshow() {
+      buildMemeSlideshow();
+      if (memeInterval !== null) return;
+      memeInterval = setInterval(advanceMeme, MEME_DISPLAY_MS + MEME_TRANSITION_MS);
+    }
+
+    function stopMemeSlideshow() {
+      if (memeInterval !== null) {
+        clearInterval(memeInterval);
+        memeInterval = null;
+      }
+    }
+
+    // Wrap showSlide to start/stop the slideshow based on active slide
+    const _origShowSlide = showSlide;
+    showSlide = function (index) {
+      _origShowSlide(index);
+      if (index === 0) {
+        startMemeSlideshow();
+      } else {
+        stopMemeSlideshow();
+      }
+    };
+    // ─────────────────────────────────────────────────────────────────
+
     showSlide(0);
     scheduleFit();
   </script>
