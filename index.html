@@ -2503,99 +2503,156 @@ mean(df$Score, na.rm = TRUE)</pre><p>Detect missing values and remove them from 
       });
 
       const panel = root.querySelector("#index-match-panel");
+
       if (state.tab === "match") {
         const active = matchArray.indexOf(state.lookup);
         panel.innerHTML = `
           <div class="sim-grid">
-            <div class="control" style="max-width:220px;"><label for="match-lookup">Lookup value</label><input id="match-lookup" value="${state.lookup}"></div>
-            <div class="formula-banner">=MATCH("${state.lookup}", array, 0)</div>
-            <div class="array-strip">${matchArray.map((item, index) => `
-              <div class="array-cell ${index === active ? "active" : ""}">${item}<span class="array-pos">pos ${index + 1}</span></div>
+            <div class="control" style="max-width:220px;"><label for="match-lookup">Lookup value</label><input id="match-lookup" value="${state.lookup}" autocomplete="off" spellcheck="false"></div>
+            <div id="match-formula" class="formula-banner">=MATCH("${state.lookup}", array, 0)</div>
+            <div id="match-strip" class="array-strip">${matchArray.map((item, i) => `
+              <div class="array-cell ${i === active ? "active" : ""}">${item}<span class="array-pos">pos ${i + 1}</span></div>
             `).join("")}</div>
-            <div class="result-box ${active === -1 ? "error" : ""}">${active === -1 ? "Not Found" : active + 1}</div>
-            <div class="sim-explain">${active === -1 ? `No exact match for "${state.lookup}".` : `"${state.lookup}" is at position ${active + 1} in the array.`}</div>
+            <div id="match-result" class="result-box ${active === -1 ? "error" : ""}">${active === -1 ? "Not Found" : active + 1}</div>
+            <div id="match-explain" class="sim-explain">${active === -1 ? `No exact match for "${state.lookup}".` : `"${state.lookup}" is at position ${active + 1} in the array.`}</div>
           </div>
         `;
         panel.querySelector("#match-lookup").addEventListener("input", (event) => {
           state.lookup = event.target.value;
-          renderIndexMatch(root, "match");
+          const act = matchArray.indexOf(state.lookup);
+          panel.querySelector("#match-formula").textContent = `=MATCH("${state.lookup}", array, 0)`;
+          panel.querySelector("#match-strip").innerHTML = matchArray.map((item, i) => `
+            <div class="array-cell ${i === act ? "active" : ""}">${item}<span class="array-pos">pos ${i + 1}</span></div>
+          `).join("");
+          const resEl = panel.querySelector("#match-result");
+          resEl.className = `result-box${act === -1 ? " error" : ""}`;
+          resEl.textContent = act === -1 ? "Not Found" : act + 1;
+          panel.querySelector("#match-explain").textContent = act === -1 ? `No exact match for "${state.lookup}".` : `"${state.lookup}" is at position ${act + 1} in the array.`;
+          scheduleFit();
         });
+
       } else if (state.tab === "index") {
         const selected = Math.max(1, Math.min(indexArray.length, Number(state.row) || 1));
         state.row = selected;
         panel.innerHTML = `
           <div class="sim-grid">
             <div class="control" style="max-width:220px;"><label for="index-row">Row number</label><input id="index-row" type="number" min="1" max="4" value="${selected}"></div>
-            <div class="formula-banner">=INDEX(array, ${selected})</div>
-            <div class="array-strip">${indexArray.map((item, index) => `
-              <div class="array-cell ${index === selected - 1 ? "active" : ""}">${item}<span class="array-pos">[${index + 1}]</span></div>
+            <div id="index-formula" class="formula-banner">=INDEX(array, ${selected})</div>
+            <div id="index-strip" class="array-strip">${indexArray.map((item, i) => `
+              <div class="array-cell ${i === selected - 1 ? "active" : ""}">${item}<span class="array-pos">[${i + 1}]</span></div>
             `).join("")}</div>
-            <div class="result-box">${indexArray[selected - 1]}</div>
-            <div class="sim-explain">INDEX returns the value at position ${selected}, which is ${indexArray[selected - 1]}.</div>
+            <div id="index-result" class="result-box">${indexArray[selected - 1]}</div>
+            <div id="index-explain" class="sim-explain">INDEX returns the value at position ${selected}, which is ${indexArray[selected - 1]}.</div>
           </div>
         `;
         panel.querySelector("#index-row").addEventListener("input", (event) => {
           state.row = event.target.value;
-          renderIndexMatch(root, "index");
+          const sel = Math.max(1, Math.min(indexArray.length, Number(state.row) || 1));
+          panel.querySelector("#index-formula").textContent = `=INDEX(array, ${sel})`;
+          panel.querySelector("#index-strip").innerHTML = indexArray.map((item, i) => `
+            <div class="array-cell ${i === sel - 1 ? "active" : ""}">${item}<span class="array-pos">[${i + 1}]</span></div>
+          `).join("");
+          panel.querySelector("#index-result").textContent = indexArray[sel - 1];
+          panel.querySelector("#index-explain").textContent = `INDEX returns the value at position ${sel}, which is ${indexArray[sel - 1]}.`;
+          scheduleFit();
         });
+
       } else {
         const active = matchArray.indexOf(state.lookup);
         const result = active >= 0 ? indexArray[active] : null;
         panel.innerHTML = `
           <div class="sim-grid">
-            <div class="control" style="max-width:220px;"><label for="combo-lookup">Lookup</label><input id="combo-lookup" value="${state.lookup}"></div>
+            <div class="control" style="max-width:220px;"><label for="combo-lookup">Lookup</label><input id="combo-lookup" value="${state.lookup}" autocomplete="off" spellcheck="false"></div>
             <div id="combo-table">
               <table class="data-table">
                 <thead><tr><th>Department</th><th>Budget</th></tr></thead>
                 <tbody>
-                  ${matchArray.map((item, index) => `
-                    <tr class="${index === active ? "row-match" : (active >= 0 ? "row-dim" : "")}">
+                  ${matchArray.map((item, i) => `
+                    <tr class="${i === active ? "row-match" : (active >= 0 ? "row-dim" : "")}">
                       <td>${item}</td>
-                      <td class="${index === active ? "cell-return" : ""}">${indexArray[index]}</td>
+                      <td class="${i === active ? "cell-return" : ""}">${indexArray[i]}</td>
                     </tr>
                   `).join("")}
                 </tbody>
               </table>
             </div>
-            <div class="formula-banner">=INDEX(Budget, MATCH("${state.lookup}", Department, 0))</div>
-            <div class="result-box ${active === -1 ? "error" : ""}">${active === -1 ? "Not Found" : result}</div>
-            <div class="sim-explain">${active === -1 ? `MATCH cannot find "${state.lookup}", so INDEX has no valid position to use.` : `Step 1: MATCH finds "${state.lookup}" at position ${active + 1}. Step 2: INDEX returns Budget[${active + 1}] → ${result}.`}</div>
+            <div id="combo-formula" class="formula-banner">=INDEX(Budget, MATCH("${state.lookup}", Department, 0))</div>
+            <div id="combo-result" class="result-box ${active === -1 ? "error" : ""}">${active === -1 ? "Not Found" : result}</div>
+            <div id="combo-explain" class="sim-explain">${active === -1 ? `MATCH cannot find "${state.lookup}", so INDEX has no valid position to use.` : `Step 1: MATCH finds "${state.lookup}" at position ${active + 1}. Step 2: INDEX returns Budget[${active + 1}] → ${result}.`}</div>
           </div>
         `;
         panel.querySelector("#combo-lookup").addEventListener("input", (event) => {
           state.lookup = event.target.value;
-          renderIndexMatch(root, "combo");
+          const act = matchArray.indexOf(state.lookup);
+          const res = act >= 0 ? indexArray[act] : null;
+          panel.querySelector("#combo-table").innerHTML = `
+            <table class="data-table">
+              <thead><tr><th>Department</th><th>Budget</th></tr></thead>
+              <tbody>
+                ${matchArray.map((item, i) => `
+                  <tr class="${i === act ? "row-match" : (act >= 0 ? "row-dim" : "")}">
+                    <td>${item}</td>
+                    <td class="${i === act ? "cell-return" : ""}">${indexArray[i]}</td>
+                  </tr>
+                `).join("")}
+              </tbody>
+            </table>
+          `;
+          panel.querySelector("#combo-formula").textContent = `=INDEX(Budget, MATCH("${state.lookup}", Department, 0))`;
+          const resEl = panel.querySelector("#combo-result");
+          resEl.className = `result-box${act === -1 ? " error" : ""}`;
+          resEl.textContent = act === -1 ? "Not Found" : res;
+          panel.querySelector("#combo-explain").textContent = act === -1 ? `MATCH cannot find "${state.lookup}", so INDEX has no valid position to use.` : `Step 1: MATCH finds "${state.lookup}" at position ${act + 1}. Step 2: INDEX returns Budget[${act + 1}] → ${res}.`;
+          scheduleFit();
         });
       }
+
       scheduleFit();
     }
 
     function makeTextFunctionSimulator(root) {
       const state = { text: "PROD-2024-XL", mode: "LEFT", chars: 4, start: 6 };
-      function render() {
-        let active = [];
-        let result = "";
+
+      function compute() {
+        let active = [], result = "";
         if (state.mode === "LEFT") {
-          active = Array.from({ length: Math.max(0, Number(state.chars) || 0) }, (_, index) => index).filter((index) => index < state.text.length);
+          active = Array.from({ length: Math.max(0, Number(state.chars) || 0) }, (_, i) => i).filter((i) => i < state.text.length);
           result = state.text.slice(0, Number(state.chars) || 0);
         } else if (state.mode === "RIGHT") {
           const count = Math.max(0, Number(state.chars) || 0);
-          active = Array.from({ length: count }, (_, index) => state.text.length - count + index).filter((index) => index >= 0 && index < state.text.length);
+          active = Array.from({ length: count }, (_, i) => state.text.length - count + i).filter((i) => i >= 0 && i < state.text.length);
           result = state.text.slice(state.text.length - count);
         } else {
-          const start = Math.max(1, Number(state.start) || 1);
+          const s = Math.max(1, Number(state.start) || 1);
           const count = Math.max(0, Number(state.chars) || 0);
-          active = Array.from({ length: count }, (_, index) => start - 1 + index).filter((index) => index < state.text.length);
-          result = state.text.slice(start - 1, start - 1 + count);
+          active = Array.from({ length: count }, (_, i) => s - 1 + i).filter((i) => i < state.text.length);
+          result = state.text.slice(s - 1, s - 1 + count);
         }
+        return { active, result };
+      }
+
+      function updateDynamic() {
+        const { active, result } = compute();
+        root.querySelector("#text-charmap").innerHTML = buildCharMap(state.text, active);
+        root.querySelector("#text-formula").textContent = state.mode === "LEFT"
+          ? `=LEFT("${state.text}", ${state.chars})`
+          : state.mode === "RIGHT"
+            ? `=RIGHT("${state.text}", ${state.chars})`
+            : `=MID("${state.text}", ${state.start}, ${state.chars})`;
+        root.querySelector("#text-result").textContent = `"${result}"`;
+        scheduleFit();
+      }
+
+      function render() {
+        const { active, result } = compute();
         root.innerHTML = `
           <div class="sim-grid">
-            <div class="control"><label for="text-input">Input string</label><input id="text-input" value="${escapeHtml(state.text)}"></div>
-            ${buildCharMap(state.text, active)}
+            <div class="control"><label for="text-input">Input string</label><input id="text-input" value="${escapeHtml(state.text)}" autocomplete="off" spellcheck="false"></div>
+            <div id="text-charmap">${buildCharMap(state.text, active)}</div>
             <div class="tab-row">
               ${["LEFT", "RIGHT", "MID"].map((mode) => `<button class="tab ${state.mode === mode ? "active" : ""}" data-mode="${mode}">${mode}</button>`).join("")}
             </div>
-            <div class="sim-controls">
+            <div class="sim-controls" id="text-controls">
               ${state.mode === "MID" ? `
                 <div class="control"><label for="mid-start">Start</label><input id="mid-start" type="number" min="1" value="${state.start}"></div>
                 <div class="control"><label for="mid-count">Num chars</label><input id="mid-count" type="number" min="0" value="${state.chars}"></div>
@@ -2603,24 +2660,18 @@ mean(df$Score, na.rm = TRUE)</pre><p>Detect missing values and remove them from 
                 <div class="control"><label for="char-count">Num chars</label><input id="char-count" type="number" min="0" value="${state.chars}"></div>
               `}
             </div>
-            <div class="formula-banner">${state.mode === "LEFT" ? `=LEFT("${state.text}", ${state.chars})` : state.mode === "RIGHT" ? `=RIGHT("${state.text}", ${state.chars})` : `=MID("${state.text}", ${state.start}, ${state.chars})`}</div>
-            <div class="result-box">"${result}"</div>
+            <div id="text-formula" class="formula-banner">${state.mode === "LEFT" ? `=LEFT("${state.text}", ${state.chars})` : state.mode === "RIGHT" ? `=RIGHT("${state.text}", ${state.chars})` : `=MID("${state.text}", ${state.start}, ${state.chars})`}</div>
+            <div id="text-result" class="result-box">"${result}"</div>
           </div>
         `;
-        root.querySelector("#text-input").addEventListener("input", (event) => {
-          state.text = event.target.value;
-          render();
-        });
-        root.querySelectorAll("[data-mode]").forEach((btn) => btn.addEventListener("click", () => {
-          state.mode = btn.dataset.mode;
-          render();
-        }));
+        root.querySelector("#text-input").addEventListener("input", (e) => { state.text = e.target.value; updateDynamic(); });
+        root.querySelectorAll("[data-mode]").forEach((btn) => btn.addEventListener("click", () => { state.mode = btn.dataset.mode; render(); }));
         const charCount = root.querySelector("#char-count");
-        if (charCount) charCount.addEventListener("input", (event) => { state.chars = event.target.value; render(); });
+        if (charCount) charCount.addEventListener("input", (e) => { state.chars = e.target.value; updateDynamic(); });
         const midStart = root.querySelector("#mid-start");
         const midCount = root.querySelector("#mid-count");
-        if (midStart) midStart.addEventListener("input", (event) => { state.start = event.target.value; render(); });
-        if (midCount) midCount.addEventListener("input", (event) => { state.chars = event.target.value; render(); });
+        if (midStart) midStart.addEventListener("input", (e) => { state.start = e.target.value; updateDynamic(); });
+        if (midCount) midCount.addEventListener("input", (e) => { state.chars = e.target.value; updateDynamic(); });
         scheduleFit();
       }
       render();
@@ -2630,34 +2681,38 @@ mean(df$Score, na.rm = TRUE)</pre><p>Detect missing values and remove them from 
       const state = { parts: ["Hello", " ", "World"] };
       const colors = ["#f7d28c", "#b6d8f2", "#c9e7ce", "#f5c0c0", "#ded3f6"];
 
+      function updateDynamic() {
+        root.querySelector("#concat-formula").textContent = `=CONCATENATE(${state.parts.map((p) => `"${p.replaceAll('"', '\\"')}"`).join(", ")})`;
+        root.querySelector("#concat-segments").innerHTML = state.parts.map((p, i) => `<div class="segment" style="background:${colors[i % colors.length]}">${escapeHtml(p || "∅")}</div>`).join("");
+        root.querySelector("#concat-result").textContent = state.parts.join("");
+        scheduleFit();
+      }
+
       function render() {
         root.innerHTML = `
           <div class="sim-grid">
-            <div class="sim-controls">
-              ${state.parts.map((part, index) => `
+            <div class="sim-controls" id="concat-inputs">
+              ${state.parts.map((part, i) => `
                 <div class="control">
-                  <label for="concat-${index}">Part ${index + 1}</label>
-                  <input class="concat-part" id="concat-${index}" data-part="${index}" value="${escapeHtml(part)}">
+                  <label for="concat-${i}">Part ${i + 1}</label>
+                  <input class="concat-part" id="concat-${i}" data-part="${i}" value="${escapeHtml(part)}" autocomplete="off" spellcheck="false">
                 </div>
               `).join("")}
             </div>
             <div><button class="tab" id="add-part" ${state.parts.length >= 5 ? "disabled" : ""}>+ Add part</button></div>
-            <div class="formula-banner">=CONCATENATE(${state.parts.map((part) => `"${part.replaceAll('"', '\\"')}"`).join(", ")})</div>
-            <div class="segment-output">
-              ${state.parts.map((part, index) => `<div class="segment" style="background:${colors[index % colors.length]}">${escapeHtml(part || "∅")}</div>`).join("")}
+            <div id="concat-formula" class="formula-banner">=CONCATENATE(${state.parts.map((p) => `"${p.replaceAll('"', '\\"')}"`).join(", ")})</div>
+            <div id="concat-segments" class="segment-output">
+              ${state.parts.map((p, i) => `<div class="segment" style="background:${colors[i % colors.length]}">${escapeHtml(p || "∅")}</div>`).join("")}
             </div>
-            <div class="result-box">${escapeHtml(state.parts.join(""))}</div>
+            <div id="concat-result" class="result-box">${escapeHtml(state.parts.join(""))}</div>
           </div>
         `;
-        root.querySelectorAll("[data-part]").forEach((input) => input.addEventListener("input", (event) => {
-          state.parts[Number(event.target.dataset.part)] = event.target.value;
-          render();
+        root.querySelectorAll("[data-part]").forEach((input) => input.addEventListener("input", (e) => {
+          state.parts[Number(e.target.dataset.part)] = e.target.value;
+          updateDynamic();
         }));
         root.querySelector("#add-part").addEventListener("click", () => {
-          if (state.parts.length < 5) {
-            state.parts.push("");
-            render();
-          }
+          if (state.parts.length < 5) { state.parts.push(""); render(); }
         });
         scheduleFit();
       }
@@ -2667,34 +2722,47 @@ mean(df$Score, na.rm = TRUE)</pre><p>Detect missing values and remove them from 
     function makeLenTrimSimulator(root) {
       const state = { text: "   Hello   World   " };
 
+      function updateDynamic() {
+        const before = state.text;
+        const after = trimExcelStyle(before);
+        const removed = before.length - after.length;
+        root.querySelector("#len-before").innerHTML = `
+          <div class="mini-label">Before TRIM</div>
+          <div class="spaces-view">${visibleSpaces(before)}</div>
+          <p style="margin-top:0.7rem;"><span class="inline-formula">LEN = ${before.length}</span></p>
+        `;
+        root.querySelector("#len-after").innerHTML = `
+          <div class="mini-label">After TRIM</div>
+          <div class="spaces-view">${visibleSpaces(after)}</div>
+          <p style="margin-top:0.7rem;"><span class="inline-formula">LEN = ${after.length}</span></p>
+        `;
+        root.querySelector("#len-explain").innerHTML = `TRIM removed <strong>${removed}</strong> extra space character${removed === 1 ? "" : "s"}.`;
+        scheduleFit();
+      }
+
       function render() {
         const before = state.text;
         const after = trimExcelStyle(before);
-        const beforeLen = before.length;
-        const afterLen = after.length;
-        const removed = beforeLen - afterLen;
+        const removed = before.length - after.length;
         root.innerHTML = `
           <div class="sim-grid">
-            <div class="control"><label for="trim-input">Input</label><input id="trim-input" value="${escapeHtml(state.text)}"></div>
+            <div class="control"><label for="trim-input">Input</label><input id="trim-input" value="${escapeHtml(state.text)}" autocomplete="off"></div>
             <div class="compare-panels">
-              <div class="compare-panel">
+              <div id="len-before" class="compare-panel">
                 <div class="mini-label">Before TRIM</div>
                 <div class="spaces-view">${visibleSpaces(before)}</div>
-                <p style="margin-top:0.7rem;"><span class="inline-formula">LEN = ${beforeLen}</span></p>
+                <p style="margin-top:0.7rem;"><span class="inline-formula">LEN = ${before.length}</span></p>
               </div>
-              <div class="compare-panel">
+              <div id="len-after" class="compare-panel">
                 <div class="mini-label">After TRIM</div>
                 <div class="spaces-view">${visibleSpaces(after)}</div>
-                <p style="margin-top:0.7rem;"><span class="inline-formula">LEN = ${afterLen}</span></p>
+                <p style="margin-top:0.7rem;"><span class="inline-formula">LEN = ${after.length}</span></p>
               </div>
             </div>
-            <div class="sim-explain">TRIM removed <strong>${removed}</strong> extra space character${removed === 1 ? "" : "s"}.</div>
+            <div id="len-explain" class="sim-explain">TRIM removed <strong>${removed}</strong> extra space character${removed === 1 ? "" : "s"}.</div>
           </div>
         `;
-        root.querySelector("#trim-input").addEventListener("input", (event) => {
-          state.text = event.target.value;
-          render();
-        });
+        root.querySelector("#trim-input").addEventListener("input", (e) => { state.text = e.target.value; updateDynamic(); });
         scheduleFit();
       }
       render();
@@ -2703,51 +2771,63 @@ mean(df$Score, na.rm = TRUE)</pre><p>Detect missing values and remove them from 
     function makeSubstituteReplaceSimulator(root) {
       const state = { text: "2024-01-15", oldText: "-", newText: "/", start: 5, count: 1 };
 
-      function render() {
-        const substituteResult = substituteAll(state.text, state.oldText, state.newText);
+      function computePanels() {
+        const subResult = substituteAll(state.text, state.oldText, state.newText);
         const start = Math.max(1, Number(state.start) || 1);
         const count = Math.max(0, Number(state.count) || 0);
-        const replaceResult = state.text.slice(0, start - 1) + state.newText + state.text.slice(start - 1 + count);
+        const repResult = state.text.slice(0, start - 1) + state.newText + state.text.slice(start - 1 + count);
         const subMarked = state.oldText ? escapeHtml(state.text).replaceAll(escapeHtml(state.oldText), `<mark>${escapeHtml(state.oldText)}</mark>`) : escapeHtml(state.text);
-        const replaceMarked = state.text.split("").map((ch, index) => {
-          const active = index >= start - 1 && index < start - 1 + count;
-          return active ? `<mark>${escapeHtml(ch)}</mark>` : escapeHtml(ch);
-        }).join("");
+        const repMarked = state.text.split("").map((ch, i) => (i >= start - 1 && i < start - 1 + count) ? `<mark>${escapeHtml(ch)}</mark>` : escapeHtml(ch)).join("");
+        return { subResult, repResult, subMarked, repMarked, start, count };
+      }
 
+      function updateDynamic() {
+        const { subResult, repResult, subMarked, repMarked, start, count } = computePanels();
+        root.querySelector("#sub-panel").innerHTML = `
+          <h3>SUBSTITUTE</h3><p>Replaces by content.</p>
+          <div class="spaces-view">${subMarked}</div>
+          <div class="formula-banner" style="margin-top:0.8rem;">=SUBSTITUTE("${state.text}", "${state.oldText}", "${state.newText}")</div>
+          <div class="result-box" style="margin-top:0.8rem;">${escapeHtml(subResult)}</div>
+        `;
+        root.querySelector("#rep-panel").innerHTML = `
+          <h3>REPLACE</h3><p>Replaces by position.</p>
+          <div class="spaces-view">${repMarked}</div>
+          <div class="formula-banner" style="margin-top:0.8rem;">=REPLACE("${state.text}", ${start}, ${count}, "${state.newText}")</div>
+          <div class="result-box" style="margin-top:0.8rem;">${escapeHtml(repResult)}</div>
+        `;
+        scheduleFit();
+      }
+
+      function render() {
+        const { subResult, repResult, subMarked, repMarked, start, count } = computePanels();
         root.innerHTML = `
           <div class="sim-grid">
             <div class="sim-controls">
-              <div class="control"><label for="shared-text">Text</label><input id="shared-text" value="${escapeHtml(state.text)}"></div>
-              <div class="control"><label for="sub-old">Old</label><input id="sub-old" value="${escapeHtml(state.oldText)}"></div>
-              <div class="control"><label for="shared-new">New</label><input id="shared-new" value="${escapeHtml(state.newText)}"></div>
+              <div class="control"><label for="shared-text">Text</label><input id="shared-text" value="${escapeHtml(state.text)}" autocomplete="off" spellcheck="false"></div>
+              <div class="control"><label for="sub-old">Old</label><input id="sub-old" value="${escapeHtml(state.oldText)}" autocomplete="off" spellcheck="false"></div>
+              <div class="control"><label for="shared-new">New</label><input id="shared-new" value="${escapeHtml(state.newText)}" autocomplete="off" spellcheck="false"></div>
               <div class="control"><label for="replace-start">Start</label><input id="replace-start" type="number" min="1" value="${state.start}"></div>
               <div class="control"><label for="replace-count">Num</label><input id="replace-count" type="number" min="0" value="${state.count}"></div>
             </div>
             <div class="compare-panels">
-              <div class="compare-panel">
-                <h3>SUBSTITUTE</h3>
-                <p>Replaces by content.</p>
+              <div id="sub-panel" class="compare-panel">
+                <h3>SUBSTITUTE</h3><p>Replaces by content.</p>
                 <div class="spaces-view">${subMarked}</div>
                 <div class="formula-banner" style="margin-top:0.8rem;">=SUBSTITUTE("${state.text}", "${state.oldText}", "${state.newText}")</div>
-                <div class="result-box" style="margin-top:0.8rem;">${escapeHtml(substituteResult)}</div>
+                <div class="result-box" style="margin-top:0.8rem;">${escapeHtml(subResult)}</div>
               </div>
-              <div class="compare-panel">
-                <h3>REPLACE</h3>
-                <p>Replaces by position.</p>
-                <div class="spaces-view">${replaceMarked}</div>
+              <div id="rep-panel" class="compare-panel">
+                <h3>REPLACE</h3><p>Replaces by position.</p>
+                <div class="spaces-view">${repMarked}</div>
                 <div class="formula-banner" style="margin-top:0.8rem;">=REPLACE("${state.text}", ${start}, ${count}, "${state.newText}")</div>
-                <div class="result-box" style="margin-top:0.8rem;">${escapeHtml(replaceResult)}</div>
+                <div class="result-box" style="margin-top:0.8rem;">${escapeHtml(repResult)}</div>
               </div>
             </div>
             <div class="difference-banner">Key difference: SUBSTITUTE finds matching content and replaces every match. REPLACE targets a specific position range.</div>
           </div>
         `;
-
-        [["#shared-text", "text"], ["#sub-old", "oldText"], ["#shared-new", "newText"], ["#replace-start", "start"], ["#replace-count", "count"]].forEach(([selector, key]) => {
-          root.querySelector(selector).addEventListener("input", (event) => {
-            state[key] = event.target.value;
-            render();
-          });
+        [["#shared-text", "text"], ["#sub-old", "oldText"], ["#shared-new", "newText"], ["#replace-start", "start"], ["#replace-count", "count"]].forEach(([sel, key]) => {
+          root.querySelector(sel).addEventListener("input", (e) => { state[key] = e.target.value; updateDynamic(); });
         });
         scheduleFit();
       }
@@ -2757,43 +2837,54 @@ mean(df$Score, na.rm = TRUE)</pre><p>Detect missing values and remove them from 
     function makeFindSearchSimulator(root) {
       const state = { text: "Hello World", needle: "world" };
 
+      function updateDynamic() {
+        const { text: haystack, needle } = state;
+        const findIndex = haystack.indexOf(needle);
+        const searchIndex = haystack.toLowerCase().indexOf(needle.toLowerCase());
+        const active = searchIndex >= 0 ? Array.from({ length: needle.length }, (_, i) => searchIndex + i) : [];
+        root.querySelector("#find-panel").innerHTML = `
+          <h3>FIND</h3><p>Case-sensitive</p>
+          <div class="result-box ${findIndex === -1 ? "error" : ""}" style="margin-top:0.8rem;">${findIndex === -1 ? "ERROR" : findIndex + 1}</div>
+          <p style="margin-top:0.75rem;">${findIndex === -1 ? `"${needle}" does not exactly match the case in "${haystack}".` : `Match starts at position ${findIndex + 1}.`}</p>
+        `;
+        root.querySelector("#search-panel").innerHTML = `
+          <h3>SEARCH</h3><p>Case-insensitive</p>
+          <div class="result-box ${searchIndex === -1 ? "error" : ""}" style="margin-top:0.8rem;">${searchIndex === -1 ? "ERROR" : searchIndex + 1}</div>
+          <p style="margin-top:0.75rem;">${searchIndex === -1 ? `No match found for "${needle}".` : `SEARCH matches "${haystack.slice(searchIndex, searchIndex + needle.length)}" starting at position ${searchIndex + 1}.`}</p>
+        `;
+        root.querySelector("#find-charmap").innerHTML = buildCharMap(haystack, active);
+        scheduleFit();
+      }
+
       function render() {
         const haystack = state.text;
         const needle = state.needle;
         const findIndex = haystack.indexOf(needle);
         const searchIndex = haystack.toLowerCase().indexOf(needle.toLowerCase());
-        const active = searchIndex >= 0 ? Array.from({ length: needle.length }, (_, index) => searchIndex + index) : [];
+        const active = searchIndex >= 0 ? Array.from({ length: needle.length }, (_, i) => searchIndex + i) : [];
         root.innerHTML = `
           <div class="sim-grid">
             <div class="sim-controls">
-              <div class="control"><label for="find-text">Text</label><input id="find-text" value="${escapeHtml(state.text)}"></div>
-              <div class="control"><label for="find-needle">Find me</label><input id="find-needle" value="${escapeHtml(state.needle)}"></div>
+              <div class="control"><label for="find-text">Text</label><input id="find-text" value="${escapeHtml(state.text)}" autocomplete="off" spellcheck="false"></div>
+              <div class="control"><label for="find-needle">Find me</label><input id="find-needle" value="${escapeHtml(state.needle)}" autocomplete="off" spellcheck="false"></div>
             </div>
             <div class="compare-panels">
-              <div class="compare-panel">
-                <h3>FIND</h3>
-                <p>Case-sensitive</p>
+              <div id="find-panel" class="compare-panel">
+                <h3>FIND</h3><p>Case-sensitive</p>
                 <div class="result-box ${findIndex === -1 ? "error" : ""}" style="margin-top:0.8rem;">${findIndex === -1 ? "ERROR" : findIndex + 1}</div>
                 <p style="margin-top:0.75rem;">${findIndex === -1 ? `"${needle}" does not exactly match the case in "${haystack}".` : `Match starts at position ${findIndex + 1}.`}</p>
               </div>
-              <div class="compare-panel">
-                <h3>SEARCH</h3>
-                <p>Case-insensitive</p>
+              <div id="search-panel" class="compare-panel">
+                <h3>SEARCH</h3><p>Case-insensitive</p>
                 <div class="result-box ${searchIndex === -1 ? "error" : ""}" style="margin-top:0.8rem;">${searchIndex === -1 ? "ERROR" : searchIndex + 1}</div>
                 <p style="margin-top:0.75rem;">${searchIndex === -1 ? `No match found for "${needle}".` : `SEARCH matches "${haystack.slice(searchIndex, searchIndex + needle.length)}" starting at position ${searchIndex + 1}.`}</p>
               </div>
             </div>
-            ${buildCharMap(haystack, active)}
+            <div id="find-charmap">${buildCharMap(haystack, active)}</div>
           </div>
         `;
-        root.querySelector("#find-text").addEventListener("input", (event) => {
-          state.text = event.target.value;
-          render();
-        });
-        root.querySelector("#find-needle").addEventListener("input", (event) => {
-          state.needle = event.target.value;
-          render();
-        });
+        root.querySelector("#find-text").addEventListener("input", (e) => { state.text = e.target.value; updateDynamic(); });
+        root.querySelector("#find-needle").addEventListener("input", (e) => { state.needle = e.target.value; updateDynamic(); });
         scheduleFit();
       }
       render();
