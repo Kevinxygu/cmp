@@ -1102,7 +1102,7 @@
     </div>
   </div>
 
-  <div id="slide-counter">1 / 28</div>
+  <div id="slide-counter">1 / 31</div>
 
   <div id="overview" aria-hidden="true">
     <div class="overview-panel">
@@ -1193,7 +1193,6 @@
           <div class="slide-shell">
             <header class="slide-header">
               <h1 class="slide-title">Overview &amp; Housekeeping</h1>
-              <p class="slide-subtitle">Frame the session structure before the content gets dense.</p>
             </header>
             <div class="slide-body">
               <div class="content-grid">
@@ -1236,7 +1235,7 @@
             <div class="section-label">EXCEL</div>
             <div>
               <h1 class="hero-title">Excel Review</h1>
-              <p class="hero-subtitle">Lectures 10–16 · 7 function families</p>
+              <p>7 function families</p>
             </div>
             <div class="roadmap-grid">
               ${[
@@ -1254,7 +1253,7 @@
                 </div>
               `).join("")}
             </div>
-            <p class="hero-meta">For Excel questions, the first move is usually to identify the function family before worrying about the exact syntax.</p>
+            <p>For Excel questions, the first move is usually to identify the function family before worrying about the exact syntax.</p>
           </div>
         `
       },
@@ -1726,7 +1725,6 @@
             <header class="slide-header">
               <div class="section-label">R</div>
               <h1 class="slide-title">R Programming Basics</h1>
-              <p class="slide-subtitle">Keep this part focused on the patterns students need to read and interpret on the exam.</p>
             </header>
             <div class="slide-body">
               <div class="content-grid">
@@ -1830,7 +1828,7 @@ TRUE | FALSE   # TRUE
         `
       },
       {
-        title: "Data Frames",
+        title: "Tibble Data Frame",
         section: "R",
         overview: "R",
         className: "layout-concept",
@@ -1839,27 +1837,28 @@ TRUE | FALSE   # TRUE
           <div class="slide-shell" style="--section-color: var(--r-blue);">
             <header class="slide-header">
               <div class="section-label">R</div>
-              <h1 class="slide-title">Data Frames</h1>
-              <p class="slide-subtitle">A data frame is R’s version of a spreadsheet table: rows are observations and columns are variables.</p>
+              <h1 class="slide-title">Tibble Data Frame</h1>
+              <p class="slide-subtitle">A tibble is tidyverse’s version of a data frame — rows are observations, columns are variables. Use <span class="inline-formula">tibble()</span>, not <span class="inline-formula">data.frame()</span>.</p>
             </header>
             <div class="slide-body">
               <div class="content-grid">
                 <div class="card">
-                  <h3>Creation</h3>
-                  <pre class="code-block">df &lt;- data.frame(
-  Name = c("Alice", "Bob", "Carol"),
+                  <h3>Creation with tibble()</h3>
+                  <pre class="code-block">library(tidyverse)
+
+df &lt;- tibble(
+  Name  = c("Alice", "Bob", "Carol"),
   Score = c(85, 92, 78),
-  Pass = c(TRUE, TRUE, TRUE)
+  Pass  = c(TRUE, TRUE, TRUE)
 )</pre>
+                  <p style="margin-top:0.6rem;">Each named argument becomes a column. All vectors must be the same length.</p>
                 </div>
                 <div class="card">
-                  <h3>Access patterns</h3>
-                  <ul>
-                    <li><span class="inline-formula">df$Name</span> gets a whole column.</li>
-                    <li><span class="inline-formula">df[1, ]</span> gets row 1.</li>
-                    <li><span class="inline-formula">df[2, "Score"]</span> gets one cell.</li>
-                    <li><span class="inline-formula">nrow(df)</span> and <span class="inline-formula">ncol(df)</span> count rows and columns.</li>
-                  </ul>
+                  <h3>Accessing data</h3>
+                  <pre class="code-block">df$Name           # column → vector
+df[[2, 2]]        # row 2, col 2 → atomic: 92
+df$Score[which(df$Pass == TRUE)]
+                  # subset column by condition</pre>
                   <table class="mini-table" style="margin-top:0.8rem;">
                     <thead><tr><th>Name</th><th>Score</th><th>Pass</th></tr></thead>
                     <tbody>
@@ -1871,8 +1870,60 @@ TRUE | FALSE   # TRUE
                 </div>
               </div>
               <div class="callout-row">
-                <div class="callout exam-tip"><div class="callout-icon">💡</div><div><h3>Exam Tip</h3><p><span class="inline-formula">df$Column</span> returns a vector. <span class="inline-formula">df[row, col]</span> targets specific cells.</p></div></div>
-                <div class="callout mistake"><div class="callout-icon">⚠️</div><div><h3>Common Mistake</h3><p>Forgetting the <span class="inline-formula">$</span> when accessing a column by name.</p></div></div>
+                <div class="callout exam-tip"><div class="callout-icon">💡</div><div><h3>Exam Tip</h3><p><span class="inline-formula">df$Col</span> returns a <strong>vector</strong>. <span class="inline-formula">df[[row, col]]</span> returns a single <strong>atomic value</strong>. To filter a column, nest <span class="inline-formula">which()</span> inside <span class="inline-formula">[]</span>.</p></div></div>
+                <div class="callout mistake"><div class="callout-icon">⚠️</div><div><h3>Common Mistake</h3><p>Using <span class="inline-formula">data.frame()</span> instead of <span class="inline-formula">tibble()</span>. The course uses tibble exclusively — <span class="inline-formula">data.frame()</span> has quirks like converting strings to factors.</p></div></div>
+              </div>
+            </div>
+          </div>
+        `
+      },
+      {
+        title: "Missing Values: NA",
+        section: "R",
+        overview: "R",
+        className: "layout-concept",
+        sectionColor: "var(--r-blue)",
+        render: () => `
+          <div class="slide-shell" style="--section-color: var(--r-blue);">
+            <header class="slide-header">
+              <div class="section-label">R</div>
+              <h1 class="slide-title">Missing Values: NA</h1>
+              <p class="slide-subtitle">NA means "Not Available." Rule of thumb: any arithmetic or logical operation involving NA produces NA.</p>
+            </header>
+            <div class="slide-body">
+              <div class="content-grid">
+                <div class="card">
+                  <h3>NA propagates through operations</h3>
+                  <pre class="code-block">1 + NA        # NA
+NA * 3        # NA
+NA &gt; 3        # NA
+NA == "Hi"    # NA
+NA == NA      # NA  ← always NA, even with itself</pre>
+                  <p style="margin-top:0.6rem;">This extends to columns — if any element is NA, calculations on that column are affected too.</p>
+                  <pre class="code-block" style="margin-top:0.6rem;">age &lt;- c(18, 21, 20, NA)
+age + 10      # 28  31  30  NA</pre>
+                </div>
+                <div class="card">
+                  <h3>is.na() and na.rm</h3>
+                  <pre class="code-block">age &lt;- c(18, 21, 20, NA)
+
+# Check which elements are missing
+is.na(age)             # FALSE FALSE FALSE TRUE
+
+# Count the NAs
+sum(is.na(age))        # 1
+
+# mean() fails by default when NAs exist
+mean(age)              # NA
+
+# na.rm = TRUE skips NAs and computes the rest
+mean(age, na.rm = TRUE) # 19.66667</pre>
+                  <p style="margin-top:0.6rem;">Use <span class="inline-formula">age == NA</span> to check for NAs — this always returns NA. Always use <span class="inline-formula">is.na()</span> instead.</p>
+                </div>
+              </div>
+              <div class="callout-row">
+                <div class="callout exam-tip"><div class="callout-icon">💡</div><div><h3>Exam Tip</h3><p>To count NAs in a column: <span class="inline-formula">sum(is.na(df$col))</span>. <span class="inline-formula">is.na()</span> returns TRUE/FALSE per element; <span class="inline-formula">sum()</span> counts the TRUEs.</p></div></div>
+                <div class="callout mistake"><div class="callout-icon">⚠️</div><div><h3>Common Mistake</h3><p>Writing <span class="inline-formula">df$col == NA</span> to find missing values. This always returns NA — never TRUE. You must use <span class="inline-formula">is.na(df$col)</span>.</p></div></div>
               </div>
             </div>
           </div>
@@ -1888,40 +1939,46 @@ TRUE | FALSE   # TRUE
           <div class="slide-shell" style="--section-color: var(--r-blue);">
             <header class="slide-header">
               <div class="section-label">R</div>
-              <h1 class="slide-title">Data Wrangling I: Select &amp; Filter</h1>
-              <p class="slide-subtitle">First choose the columns you want, then choose the rows you want.</p>
+              <h1 class=”slide-title”>Data Wrangling I: Select &amp; Filter</h1>
+              <p class=”slide-subtitle”>First choose the columns you want, then choose the rows you want — and filter out NAs before they corrupt downstream calculations.</p>
             </header>
-            <div class="slide-body">
-              <div class="content-grid">
-                <div class="workflow-step">
-                  <div class="step-number">1</div>
+            <div class=”slide-body”>
+              <div class=”content-grid”>
+                <div class=”workflow-step”>
+                  <div class=”step-number”>1</div>
                   <h3>select()</h3>
                   <p>Choose which columns to keep.</p>
-                  <div class="pipeline-code">select(df, Name, Score)</div>
+                  <div class=”pipeline-code”>select(df, Name, Score)</div>
                 </div>
-                <div class="workflow-step">
-                  <div class="step-number">2</div>
+                <div class=”workflow-step”>
+                  <div class=”step-number”>2</div>
                   <h3>filter()</h3>
-                  <p>Choose which rows to keep based on a condition.</p>
-                  <div class="pipeline-code">filter(df, Score &gt;= 80)</div>
+                  <p>Keep only rows satisfying a condition.</p>
+                  <div class=”pipeline-code”>filter(df, Score &gt;= 80)</div>
                 </div>
-                <div class="workflow-step">
-                  <div class="step-number">3</div>
-                  <h3>Pipe operator</h3>
-                  <p>Read <span class="inline-formula">%&gt;%</span> as “and then.”</p>
-                  <div class="pipeline-code">df %&gt;%
+                <div class=”workflow-step”>
+                  <div class=”step-number”>3</div>
+                  <h3>Filtering out NAs</h3>
+                  <p>Always remove NAs from columns you'll group or compute on — NAs in group variables create phantom groups.</p>
+                  <div class=”pipeline-code”># single column
+filter(df, !is.na(Score))
+
+# multiple columns at once
+filter(df, !is.na(Score), !is.na(Dept))</div>
+                </div>
+                <div class=”workflow-step”>
+                  <div class=”step-number”>4</div>
+                  <h3>Pipe operator %&gt;%</h3>
+                  <p>Read as “and then.” Chain steps left to right.</p>
+                  <div class=”pipeline-code”>df %&gt;%
+  filter(!is.na(Score)) %&gt;%
   select(Name, Score) %&gt;%
   filter(Score &gt;= 80)</div>
                 </div>
-                <div class="workflow-step">
-                  <div class="step-number">4</div>
-                  <h3>Reading the pipeline</h3>
-                  <p>Take <span class="inline-formula">df</span>, and then keep Name and Score, and then keep only rows with Score at least 80.</p>
-                </div>
               </div>
-              <div class="callout-row">
-                <div class="callout exam-tip"><div class="callout-icon">💡</div><div><h3>Exam Tip</h3><p><span class="inline-formula">select()</span> works on columns. <span class="inline-formula">filter()</span> works on rows.</p></div></div>
-                <div class="callout mistake"><div class="callout-icon">⚠️</div><div><h3>Common Mistake</h3><p>Students often try to use <span class="inline-formula">filter()</span> to choose columns or <span class="inline-formula">select()</span> to choose rows.</p></div></div>
+              <div class=”callout-row”>
+                <div class=”callout exam-tip”><div class=”callout-icon”>💡</div><div><h3>Exam Tip</h3><p><span class=”inline-formula”>select()</span> works on columns. <span class=”inline-formula”>filter()</span> works on rows. Filter out NAs <em>before</em> <span class=”inline-formula”>group_by()</span> to avoid unexpected NA groups in results.</p></div></div>
+                <div class=”callout mistake”><div class=”callout-icon”>⚠️</div><div><h3>Common Mistake</h3><p>Using <span class=”inline-formula”>df$col == NA</span> inside filter instead of <span class=”inline-formula”>!is.na(col)</span>. The <span class=”inline-formula”>== NA</span> comparison always returns NA, never TRUE.</p></div></div>
               </div>
             </div>
           </div>
@@ -1938,39 +1995,47 @@ TRUE | FALSE   # TRUE
             <header class="slide-header">
               <div class="section-label">R</div>
               <h1 class="slide-title">Data Wrangling II: Mutate &amp; Arrange</h1>
-              <p class="slide-subtitle">Create new columns, then sort the resulting rows.</p>
+              <p class="slide-subtitle">Add new columns to your data, then sort the rows in any order you need.</p>
             </header>
             <div class="slide-body">
               <div class="content-grid">
                 <div class="workflow-step">
                   <div class="step-number">1</div>
                   <h3>mutate()</h3>
-                  <p>Create a new column from existing ones.</p>
-                  <div class="pipeline-code">mutate(df, Grade = ifelse(Score &gt;= 80, "Pass", "Fail"))</div>
+                  <p>Adds a new column — existing columns are kept. Use <span class="inline-formula">if_else()</span> for conditional values.</p>
+                  <div class="pipeline-code">df %&gt;%
+  mutate(
+    Label  = if_else(Score &gt;= 80, "Pass", "Fail"),
+    Scaled = Score / 100
+  )</div>
                 </div>
                 <div class="workflow-step">
                   <div class="step-number">2</div>
-                  <h3>arrange()</h3>
-                  <p>Sort rows by a column.</p>
-                  <div class="pipeline-code">arrange(df, Score)
-arrange(df, desc(Score))</div>
+                  <h3>if_else() syntax</h3>
+                  <p><span class="inline-formula">if_else(condition, true_val, false_val)</span> — stricter than <span class="inline-formula">ifelse()</span>: both values must be the same type.</p>
+                  <div class="pipeline-code">if_else(loc == "CAN" | loc == "USA",
+        "North America",
+        "Other")</div>
                 </div>
                 <div class="workflow-step">
                   <div class="step-number">3</div>
-                  <h3>Combined pipeline</h3>
-                  <div class="pipeline-code">df %&gt;%
-  mutate(Grade = ifelse(Score &gt;= 80, "Pass", "Fail")) %&gt;%
-  arrange(desc(Score))</div>
+                  <h3>arrange()</h3>
+                  <p>Sort rows. Multiple columns: first column sorts first; ties broken by the next. Use <span class="inline-formula">desc()</span> for descending.</p>
+                  <div class="pipeline-code"># ascending fyear, then descending Score within each year
+arrange(df, fyear, desc(Score))</div>
                 </div>
                 <div class="workflow-step">
                   <div class="step-number">4</div>
-                  <h3>Read it aloud</h3>
-                  <p>Take the table, add a Grade column, then sort it from highest score to lowest.</p>
+                  <h3>Combined pipeline</h3>
+                  <div class="pipeline-code">df %&gt;%
+  filter(!is.na(Score)) %&gt;%
+  mutate(Label = if_else(Score &gt;= 80, "Pass", "Fail")) %&gt;%
+  arrange(desc(Score))</div>
                 </div>
               </div>
               <div class="callout-row">
-                <div class="callout exam-tip"><div class="callout-icon">💡</div><div><h3>Exam Tip</h3><p><span class="inline-formula">mutate()</span> adds columns; it does not remove existing ones.</p></div></div>
-                <div class="callout mistake"><div class="callout-icon">⚠️</div><div><h3>Common Mistake</h3><p>For descending order, students forget <span class="inline-formula">desc()</span> and accidentally sort smallest to largest.</p></div></div>
+                <div class="callout exam-tip"><div class="callout-icon">💡</div><div><h3>Exam Tip</h3><p><span class="inline-formula">mutate()</span> keeps all rows; it only adds columns. <span class="inline-formula">arrange()</span> with multiple columns sorts by the first, then breaks ties with the second.</p></div></div>
+                <div class="callout mistake"><div class="callout-icon">⚠️</div><div><h3>Common Mistake</h3><p>Using <span class="inline-formula">ifelse()</span> instead of <span class="inline-formula">if_else()</span>. The course uses <span class="inline-formula">if_else()</span> — it enforces matching types for the true/false values, catching errors earlier.</p></div></div>
               </div>
             </div>
           </div>
@@ -1987,44 +2052,49 @@ arrange(df, desc(Score))</div>
             <header class="slide-header">
               <div class="section-label">R</div>
               <h1 class="slide-title">Data Wrangling III: Group &amp; Summarize</h1>
-              <p class="slide-subtitle">This is the densest wrangling pattern: split the data into groups, then collapse each group into a summary row.</p>
+              <p class="slide-subtitle">Split data into groups by one or more columns, then either collapse each group to a summary row or add a computed column back to the original rows.</p>
             </header>
             <div class="slide-body">
               <div class="content-grid">
                 <div class="workflow-step">
                   <div class="step-number">1</div>
-                  <h3>group_by()</h3>
-                  <p>Set up invisible groups based on a variable like Department.</p>
-                  <div class="pipeline-code">group_by(df, Department)</div>
+                  <h3>group_by() with multiple columns</h3>
+                  <p>Pass more than one variable to group by combinations. Every unique pairing becomes its own group.</p>
+                  <div class="pipeline-code">df %&gt;%
+  filter(!is.na(fyear), !is.na(loc)) %&gt;%
+  group_by(loc, fyear)</div>
                 </div>
                 <div class="workflow-step">
                   <div class="step-number">2</div>
-                  <h3>summarize()</h3>
-                  <p>Collapse each group to one row with metrics like average and count.</p>
-                  <div class="pipeline-code">summarize(
-  Avg_Score = mean(Score),
-  Count = n()
-)</div>
-                </div>
-                <div class="workflow-step">
-                  <div class="step-number">3</div>
-                  <h3>Full pipeline</h3>
+                  <h3>group_by() + summarise()</h3>
+                  <p>Collapses each group into one summary row. <span class="inline-formula">n()</span> counts rows. Result has one row per group.</p>
                   <div class="pipeline-code">df %&gt;%
-  group_by(Department) %&gt;%
-  summarize(
-    Avg_Score = mean(Score),
-    Count = n()
+  group_by(loc, fyear) %&gt;%
+  summarise(
+    total_emp = sum(emp, na.rm = TRUE),
+    big_emp   = sum(if_else(emp &gt;= 5, emp, 0),
+                    na.rm = TRUE),
+    count     = n()
   )</div>
                 </div>
                 <div class="workflow-step">
+                  <div class="step-number">3</div>
+                  <h3>group_by() + mutate()</h3>
+                  <p>Adds a computed column back to <em>every original row</em> — unlike summarise(), no rows are dropped.</p>
+                  <div class="pipeline-code">df %&gt;%
+  filter(!is.na(loc), !is.na(fyear)) %&gt;%
+  group_by(loc, fyear) %&gt;%
+  mutate(total_at = sum(at, na.rm = TRUE))</div>
+                </div>
+                <div class="workflow-step">
                   <div class="step-number">4</div>
-                  <h3>What changes</h3>
-                  <p>Before: many rows per department. After: one row per department with summary statistics.</p>
+                  <h3>summarise() vs mutate()</h3>
+                  <p><strong>summarise()</strong> → one row per group (collapses). <strong>mutate()</strong> → same number of rows as input (appends). Choose based on whether you need to keep individual rows.</p>
                 </div>
               </div>
               <div class="callout-row">
-                <div class="callout exam-tip"><div class="callout-icon">💡</div><div><h3>Exam Tip</h3><p><span class="inline-formula">group_by()</span> and <span class="inline-formula">summarize()</span> are usually paired. Grouping alone does not create the final summary table.</p></div></div>
-                <div class="callout mistake"><div class="callout-icon">⚠️</div><div><h3>Common Mistake</h3><p>If students skip <span class="inline-formula">group_by()</span>, they get one summary for the entire dataset instead of one summary per group.</p></div></div>
+                <div class="callout exam-tip"><div class="callout-icon">💡</div><div><h3>Exam Tip</h3><p>Always <span class="inline-formula">filter(!is.na())</span> on group columns before <span class="inline-formula">group_by()</span>. An NA value forms its own phantom group in the output.</p></div></div>
+                <div class="callout mistake"><div class="callout-icon">⚠️</div><div><h3>Common Mistake</h3><p>Expecting <span class="inline-formula">group_by() + mutate()</span> to reduce rows. It doesn't — it adds a column. Only <span class="inline-formula">summarise()</span> collapses groups into one row each.</p></div></div>
               </div>
             </div>
           </div>
@@ -2041,51 +2111,44 @@ arrange(df, desc(Score))</div>
             <header class="slide-header">
               <div class="section-label">R</div>
               <h1 class="slide-title">Merging Datasets</h1>
-              <p class="slide-subtitle">Merging combines tables using a shared key. Conceptually, it is a lot like doing VLOOKUP for every row.</p>
+              <p class="slide-subtitle">Before merging, check for duplicates. Then join on a shared key, like doing VLOOKUP for every row automatically.</p>
             </header>
             <div class="slide-body">
               <div class="content-grid">
                 <div class="card">
-                  <h3>Join logic</h3>
-                  <p>The shared column is the key. Matching keys determine which rows connect across tables.</p>
-                  <div class="join-visual" style="margin-top:0.9rem;">
-                    <div class="table-box card" style="padding:0.8rem;">
-                      <div class="table-caption">Customers</div>
-                      <table class="mini-table">
-                        <thead><tr><th>CustomerID</th><th>Name</th></tr></thead>
-                        <tbody><tr><td>C01</td><td>Alice</td></tr><tr><td>C02</td><td>Bob</td></tr><tr><td>C03</td><td>Carol</td></tr></tbody>
-                      </table>
-                    </div>
-                    <div class="join-arrow">&#8594;</div>
-                    <div class="table-box card" style="padding:0.8rem;">
-                      <div class="table-caption">Orders</div>
-                      <table class="mini-table">
-                        <thead><tr><th>CustomerID</th><th>Amount</th></tr></thead>
-                        <tbody><tr><td>C01</td><td>500</td></tr><tr><td>C01</td><td>300</td></tr><tr><td>C02</td><td>200</td></tr></tbody>
-                      </table>
-                    </div>
-                  </div>
+                  <h3>duplicated()</h3>
+                  <p>Returns a logical vector — <span class="inline-formula">TRUE</span> for any row that is a repeat of an earlier row. Use with <span class="inline-formula">filter()</span> to remove them.</p>
+                  <pre class="code-block">duplicated(df)          # logical vector
+sum(duplicated(df))     # count duplicates
+
+# Remove duplicate rows
+df %&gt;% filter(!duplicated(df))</pre>
                 </div>
                 <div class="card">
-                  <h3>Code patterns</h3>
-                  <pre class="code-block">merge(customers, orders, by = "CustomerID")
+                  <h3>inner_join() vs left_join()</h3>
+                  <table class="mini-table" style="margin-bottom:0.7rem;">
+                    <thead><tr><th>Function</th><th>Keeps</th></tr></thead>
+                    <tbody>
+                      <tr><td><code>inner_join(x, y)</code></td><td>Only rows matched in <em>both</em> tables</td></tr>
+                      <tr><td><code>left_join(x, y)</code></td><td>All rows from x; NAs for unmatched y columns</td></tr>
+                    </tbody>
+                  </table>
+                  <pre class="code-block"># same column name in both tables
+inner_join(prof, background)
 
-# dplyr
-inner_join(customers, orders, by = "CustomerID")
-left_join(customers, orders, by = "CustomerID")
-right_join(customers, orders, by = "CustomerID")
-full_join(customers, orders, by = "CustomerID")</pre>
-                  <ul style="margin-top:0.8rem;">
-                    <li><strong>inner_join</strong>: keep only matches in both tables</li>
-                    <li><strong>left_join</strong>: keep all rows from the left table</li>
-                    <li><strong>right_join</strong>: keep all rows from the right table</li>
-                    <li><strong>full_join</strong>: keep everything from both tables</li>
-                  </ul>
+# different column names — map explicitly
+left_join(course, prof,
+  by = c("employee_id" = "emp_id"))
+
+# multiple join keys
+inner_join(df1, df2,
+  by = c("fyear" = "fyear",
+         "cnumber" = "gvkey"))</pre>
                 </div>
               </div>
               <div class="callout-row">
-                <div class="callout exam-tip"><div class="callout-icon">💡</div><div><h3>Exam Tip</h3><p>The <span class="inline-formula">by</span> column must exist in both tables. If the names differ, you need to map them explicitly.</p></div></div>
-                <div class="callout mistake"><div class="callout-icon">⚠️</div><div><h3>Common Mistake</h3><p>Choosing the wrong key column. Always ask which variable is shared across both datasets.</p></div></div>
+                <div class="callout exam-tip"><div class="callout-icon">💡</div><div><h3>Exam Tip</h3><p>When join-by column names differ across tables, always use <span class="inline-formula">by = c("left_col" = "right_col")</span>. Without it, R guesses — and may match on the wrong column.</p></div></div>
+                <div class="callout mistake"><div class="callout-icon">⚠️</div><div><h3>Common Mistake</h3><p>Letting R auto-detect the join key when column names <em>look</em> the same but come from different sources (e.g., <span class="inline-formula">cname</span> from one table vs <span class="inline-formula">conml</span> from another). Always verify which columns should actually match.</p></div></div>
               </div>
             </div>
           </div>
@@ -2102,20 +2165,75 @@ full_join(customers, orders, by = "CustomerID")</pre>
             <header class="slide-header">
               <div class="section-label">R</div>
               <h1 class="slide-title">Other Useful R Commands</h1>
-              <p class="slide-subtitle">Treat these as quick recognition items. Students do not need to memorize every detail, but they should know what each command is doing.</p>
+              <p class="slide-subtitle">Treat these as quick recognition items. Know what each command does and when you'd reach for it.</p>
             </header>
             <div class="slide-body">
               <div class="grid-2">
-                <div class="card"><h3>head() / tail()</h3><pre class="code-block">head(df, 5)
-tail(df, 3)</pre><p>Preview the beginning or end of a dataset.</p></div>
-                <div class="card"><h3>str()</h3><pre class="code-block">str(df)</pre><p>Show structure: variable names, types, and sample values.</p></div>
-                <div class="card"><h3>summary()</h3><pre class="code-block">summary(df)</pre><p>Get quick descriptive statistics and category summaries.</p></div>
-                <div class="card"><h3>is.na() / na.rm</h3><pre class="code-block">is.na(df$Score)
-mean(df$Score, na.rm = TRUE)</pre><p>Detect missing values and remove them from calculations when needed.</p></div>
+                <div class="card"><h3>head() / tail()</h3><pre class="code-block">head(df, 5)   # first 5 rows
+tail(df, 3)   # last 3 rows</pre><p>Preview the beginning or end of a dataset.</p></div>
+                <div class="card"><h3>str() / summary()</h3><pre class="code-block">str(df)      # structure: names, types, samples
+summary(df)  # descriptive stats per column</pre><p><span class="inline-formula">str()</span> shows <em>structure</em>; <span class="inline-formula">summary()</span> shows <em>statistics</em>.</p></div>
+                <div class="card"><h3>as.character() / as.numeric()</h3><pre class="code-block">as.character(42)      # "42"
+as.numeric("007")     # 7  (leading zeros lost)
+as.numeric("hello")   # NA + warning</pre><p>Convert between types. If the value can't convert, R returns NA with a coercion warning.</p></div>
+                <div class="card"><h3>rename()</h3><pre class="code-block">rename(df, StudentName = Name)</pre><p>Rename a column. Order is <span class="inline-formula">new_name = old_name</span> — new name on the left.</p></div>
               </div>
               <div class="callout-row">
-                <div class="callout exam-tip"><div class="callout-icon">💡</div><div><h3>Exam Tip</h3><p><span class="inline-formula">str()</span> shows structure; <span class="inline-formula">summary()</span> shows statistics. That distinction is testable.</p></div></div>
-                <div class="callout mistake"><div class="callout-icon">⚠️</div><div><h3>Common Mistake</h3><p>In <span class="inline-formula">rename()</span>, the order is <span class="inline-formula">new_name = old_name</span>.</p></div></div>
+                <div class="callout exam-tip"><div class="callout-icon">💡</div><div><h3>Exam Tip</h3><p><span class="inline-formula">as.numeric()</span> on a non-numeric string returns NA silently — check with <span class="inline-formula">is.na()</span> afterwards. Also: converting a numeric to character and back can lose leading zeros.</p></div></div>
+                <div class="callout mistake"><div class="callout-icon">⚠️</div><div><h3>Common Mistake</h3><p>In <span class="inline-formula">rename()</span>, the order is <span class="inline-formula">new_name = old_name</span> — students often flip it. In <span class="inline-formula">as.numeric()</span>, character strings that look like numbers (e.g., <span class="inline-formula">"007"</span>) will lose their leading zeros.</p></div></div>
+              </div>
+            </div>
+          </div>
+        `
+      },
+      {
+        title: "Reading & Writing Data",
+        section: "R",
+        overview: "R",
+        className: "layout-concept",
+        sectionColor: "var(--r-blue)",
+        render: () => `
+          <div class="slide-shell" style="--section-color: var(--r-blue);">
+            <header class="slide-header">
+              <div class="section-label">R</div>
+              <h1 class="slide-title">Reading &amp; Writing Data</h1>
+              <p class="slide-subtitle">Load data into R from files, and save R objects back out. RDS preserves R data types exactly; CSV is plain text that any tool can open.</p>
+            </header>
+            <div class="slide-body">
+              <div class="grid-2">
+                <div class="card">
+                  <h3>Reading files</h3>
+                  <pre class="code-block"># RDS — R's binary format, preserves types
+df &lt;- readRDS("data/myfile.rds")
+
+# CSV — plain text, comma-separated
+library(tidyverse)
+df &lt;- read_csv("data/myfile.csv")
+
+# CSV from a URL
+df &lt;- read_csv("https://example.com/data.csv")</pre>
+                  <p style="margin-top:0.6rem;">RDS keeps column types (numeric, character, logical) exactly as saved. CSV always imports everything as character first — <span class="inline-formula">read_csv()</span> guesses types from the values.</p>
+                </div>
+                <div class="card">
+                  <h3>Writing files</h3>
+                  <pre class="code-block"># Save as RDS
+saveRDS(df, "output/myfile.rds")
+
+# Save as CSV
+write_csv(df, "output/myfile.csv")</pre>
+                  <p style="margin-top:0.6rem;">Use RDS when you want to reload the exact R object later. Use CSV when you need to share data with Excel, Python, or other tools.</p>
+                  <table class="mini-table" style="margin-top:0.8rem;">
+                    <thead><tr><th>Format</th><th>Preserves types?</th><th>Human-readable?</th></tr></thead>
+                    <tbody>
+                      <tr><td>RDS</td><td>✓ Yes</td><td>✗ No (binary)</td></tr>
+                      <tr><td>CSV</td><td>✗ No</td><td>✓ Yes</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+              <div class="callout-row">
+                <div class="callout exam-tip"><div class="callout-icon">💡</div><div><h3>Exam Tip</h3><p>RDS is R-only and preserves data types. CSV is universal but loses type information — you may need to convert columns after loading with <span class="inline-formula">as.numeric()</span> or <span class="inline-formula">as.character()</span>.</p></div></div>
+                <div class="callout mistake"><div class="callout-icon">⚠️</div><div><h3>Common Mistake</h3><p>Forgetting <span class="inline-formula">library(tidyverse)</span> before calling <span class="inline-formula">read_csv()</span> or <span class="inline-formula">write_csv()</span>. These come from the <span class="inline-formula">readr</span> package, which is loaded as part of tidyverse.</p></div></div>
               </div>
             </div>
           </div>
@@ -2129,22 +2247,43 @@ mean(df$Score, na.rm = TRUE)</pre><p>Detect missing values and remove them from 
         render: () => `
           <div class="slide-shell hero-shell">
             <div class="badge-row">
-              <div class="badge">Transition to practice</div>
+              <div class="badge">Final Exam</div>
             </div>
             <div>
               <h1 class="hero-title">Part 2: Hands-On Practice</h1>
-              <p class="hero-subtitle">You have reviewed the concepts. Now use them.</p>
+              <p class="hero-subtitle">Let's build some cool stuff!</p>
             </div>
-            <div class="card" style="max-width: 760px; margin: 0 auto; text-align: left;">
-              <h3>What students should do next</h3>
-              <ul>
-                <li>Open laptops and work through the mini-projects at their own pace.</li>
-                <li>Use the simulator slides again if any Excel function still feels fuzzy.</li>
-                <li>Predict the output before running code or formulas.</li>
-                <li>Focus first on the functions and commands that were hardest during Part 1.</li>
-              </ul>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.2rem; max-width:820px; margin:0 auto; width:100%;">
+              <div class="card" style="text-align:left;">
+                <div style="display:flex; align-items:center; gap:0.6rem; margin-bottom:1rem;">
+                  <span style="font-size:1.4rem;">📊</span>
+                  <h3 style="margin:0; color:var(--excel-green);">Excel Files</h3>
+                </div>
+                <div style="display:flex; flex-direction:column; gap:0.6rem;">
+                  <a href="#" download style="display:flex; align-items:center; gap:0.6rem; padding:0.65rem 1rem; background:var(--excel-green); color:white; border-radius:8px; text-decoration:none; font-weight:600; font-size:0.95rem;" onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">
+                    ⬇ Starter File (.xlsx)
+                  </a>
+                  <a href="#" download style="display:flex; align-items:center; gap:0.6rem; padding:0.65rem 1rem; background:white; color:var(--excel-green); border:2px solid var(--excel-green); border-radius:8px; text-decoration:none; font-weight:600; font-size:0.95rem;" onmouseover="this.style.opacity='0.75'" onmouseout="this.style.opacity='1'">
+                    ⬇ Answer Key (.xlsx)
+                  </a>
+                </div>
+              </div>
+              <div class="card" style="text-align:left;">
+                <div style="display:flex; align-items:center; gap:0.6rem; margin-bottom:1rem;">
+                  <span style="font-size:1.4rem;">📝</span>
+                  <h3 style="margin:0; color:var(--r-blue);">R Files</h3>
+                </div>
+                <div style="display:flex; flex-direction:column; gap:0.6rem;">
+                  <a href="#" download style="display:flex; align-items:center; gap:0.6rem; padding:0.65rem 1rem; background:var(--r-blue); color:white; border-radius:8px; text-decoration:none; font-weight:600; font-size:0.95rem;" onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">
+                    ⬇ Starter File (.R)
+                  </a>
+                  <a href="#" download style="display:flex; align-items:center; gap:0.6rem; padding:0.65rem 1rem; background:white; color:var(--r-blue); border:2px solid var(--r-blue); border-radius:8px; text-decoration:none; font-weight:600; font-size:0.95rem;" onmouseover="this.style.opacity='0.75'" onmouseout="this.style.opacity='1'">
+                    ⬇ Answer Key (.R)
+                  </a>
+                </div>
+              </div>
             </div>
-            <p class="hero-meta">Slow is smooth. Smooth is fast. Read each exam question carefully and trace the logic before committing to an answer.</p>
+            <p class="hero-meta" style="margin-top:1.2rem;">GOOD LUCK!!!</p>
           </div>
         `
       }
